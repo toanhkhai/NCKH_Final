@@ -1,0 +1,6 @@
+{
+  "name": "CTUMP Research Metrics & Audit Portal",
+  "description": "Cổng quản lý và trực quan hóa dữ liệu nghiên cứu khoa học Đại học Y Dược Cần Thơ (CTUMP) với đồng bộ Google Sheets, tính điểm HĐGS và thẩm định minh chứng.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
