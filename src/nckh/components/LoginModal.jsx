@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { X, Key, AlertTriangle } from 'lucide-react';
-import { GoogleConfigModal } from './GoogleConfigModal.jsx';
+import { X, AlertTriangle } from 'lucide-react';
 
 let googleIdentityPromise = null;
 
@@ -20,7 +19,7 @@ function loadGoogleIdentity() {
     const fail = () => {
       clearTimeout(timeout);
       script.remove();
-      reject(new Error('Không tải được Google Identity Services. Vui lòng kiểm tra kết nối mạng hoặc tiện ích chặn nội dung rồi thử lại.'));
+      reject(new Error('Không tải được nút đăng nhập Google. Vui lòng kiểm tra kết nối mạng và thử lại.'));
     };
 
     script.onload = () => {
@@ -41,7 +40,6 @@ function loadGoogleIdentity() {
 
 export function LoginModal({ isOpen, onClose }) {
   const { clientId, isConfigured, loginWithCredential } = useAuth();
-  const [showConfigModal, setShowConfigModal] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [isLoadingGsi, setIsLoadingGsi] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
@@ -107,7 +105,7 @@ export function LoginModal({ isOpen, onClose }) {
           setIsLoadingGsi(false);
         } catch (error) {
           console.error('Lỗi GIS:', error);
-          setLoginError('Không thể khởi tạo nút đăng nhập Google. Kiểm tra Client ID và thử lại.');
+          setLoginError('Không thể mở đăng nhập Google. Vui lòng thử lại sau.');
           setIsLoadingGsi(false);
         }
       }
@@ -184,37 +182,21 @@ export function LoginModal({ isOpen, onClose }) {
                 ref={googleButtonRef}
                 className="min-h-[44px] flex items-center justify-center w-full"
               />
-              <p className="mt-3 text-center text-[11px] text-slate-500 leading-relaxed">
-                Nếu gặp lỗi <strong>400: origin_mismatch</strong>, mở OAuth Client ID đang dùng
-                <code className="block break-all text-slate-700">{clientId}</code>
-                trên Google Cloud Console và thêm <strong>{window.location.origin}</strong> vào <strong>Authorized JavaScript origins</strong>.
-              </p>
-              <button type="button" onClick={() => setShowConfigModal(true)} className="mt-2 text-[11px] text-blue-700 hover:underline">
-                Cấu hình Google Client ID
-              </button>
             </div>
           ) : (
             <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2.5 text-xs">
               <div className="font-bold flex items-center gap-1.5 text-amber-950">
-                <Key className="w-4 h-4 text-amber-600" />
-                <span>Chưa cấu hình Google Client ID</span>
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span>Đăng nhập tạm thời chưa khả dụng</span>
               </div>
               <p className="text-amber-800 text-[11px] leading-relaxed">
-                Để kích hoạt đăng nhập Google, vui lòng cấu hình OAuth Client ID trong file <code>.env</code>.
+                Vui lòng thử lại sau hoặc liên hệ bộ phận quản trị để được hỗ trợ.
               </p>
-              <button
-                type="button"
-                onClick={() => setShowConfigModal(true)}
-                className="w-full py-1.5 px-3 bg-amber-600 hover:bg-amber-700 text-white rounded font-semibold text-xs transition-colors cursor-pointer"
-              >
-                Cấu hình Google Client ID
-              </button>
             </div>
           )}
         </div>
       </div>
 
-      <GoogleConfigModal isOpen={showConfigModal} onClose={() => setShowConfigModal(false)} />
     </div>
   );
 }

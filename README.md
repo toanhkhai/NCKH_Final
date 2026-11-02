@@ -52,9 +52,8 @@ Lệnh này chạy kiểm thử bộ đọc dữ liệu Người học, dữ li�
 
 - Cổng 5173 hoặc 3000 đã dùng: dừng phiên server cũ bằng `Ctrl+C`. Vite giữ cố định 5173 và báo rõ nếu cổng bận.
 - Muốn đổi cổng bản đóng gói trong PowerShell: chạy `$env:PORT = '3001'`, rồi `npm start`; mở `http://localhost:3001`.
-- Đăng nhập Google: thêm đúng origin đang sử dụng (ví dụ `http://localhost:5173` hoặc `http://localhost:3000`) vào **Authorized JavaScript origins** của OAuth Client ID. `localhost` và `127.0.0.1` là hai origin khác nhau. Có thể cấu hình Client ID bằng `VITE_GOOGLE_CLIENT_ID` trong `.env.local` trước khi chạy/build, hoặc trong hộp đăng nhập.
-- Nếu trước đây đã nhập sai Client ID trong trình duyệt, mở **Đăng nhập → Cấu hình Google Client ID → Khôi phục Client ID của dự án**. Ứng dụng tự bỏ cấu hình cũ sai định dạng; Client ID hợp lệ nhưng không được Google cho phép tại origin hiện tại vẫn cần được sửa trong Google Cloud Console.
-- Lỗi **400: origin_mismatch** phải sửa trên đúng OAuth Client ID đang hiển thị trong hộp đăng nhập. Trong Google Cloud Console → **Google Auth Platform → Clients**, thêm origin lấy từ thanh địa chỉ (chỉ giao thức, tên máy và cổng; không kèm `/#/...`) vào **Authorized JavaScript origins**, rồi lưu. Với nút đăng nhập hiện tại dùng callback, không cần thêm origin vào **Authorized redirect URIs**.
+- Đăng nhập Google: quản trị viên cấu hình `VITE_GOOGLE_CLIENT_ID` trong `.env.local` hoặc biến môi trường build và thêm đúng origin triển khai vào **Authorized JavaScript origins** của OAuth Client ID trong Google Cloud Console. `localhost` và `127.0.0.1` là hai origin khác nhau. Hộp đăng nhập người dùng không hiển thị thông số hoặc công cụ cấu hình OAuth.
+- Lỗi **400: origin_mismatch** phải được quản trị viên xử lý trên OAuth Client ID của bản build: trong Google Cloud Console → **Google Auth Platform → Clients**, thêm origin đang sử dụng (giao thức, tên máy và cổng; không kèm đường dẫn) vào **Authorized JavaScript origins**, rồi lưu.
 - Để triển khai Cloudflare Pages, dùng `npm run build` từ thư mục gốc và thư mục đầu ra `dist`. Nếu cấu hình triển khai cũ còn trỏ tới `Dashboard-Combined`, đổi đường dẫn project về thư mục gốc. Worker trong `public/_worker.js` được Vite chép vào đầu ra để phục vụ proxy.
 
 ## Dữ liệu và quyền truy cập
