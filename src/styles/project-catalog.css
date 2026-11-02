@@ -1,0 +1,66 @@
+.project-catalog { color: #253044; }
+.catalog-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 20px 0 12px; }
+.catalog-toolbar h2 { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+.catalog-toolbar p, .catalog-footer p { font-size: .75rem; color: #64748b; margin-top: 4px; line-height: 1.5; }
+.catalog-tools { display: flex; align-items: center; gap: 14px; }
+.catalog-data-note { font-size: .75rem; line-height: 1.5; color: #6b7280; margin: 0 0 10px; }
+.catalog-tools label { display: flex; align-items: center; gap: 8px; font-size: .75rem; color: #64748b; }
+.catalog-tools select, .catalog-export { padding: 7px 10px; border: 1px solid #d7dee7; background: #fff; border-radius: 4px; font-size: .75rem; color: #334155; }
+.catalog-export { display: inline-flex; align-items: center; gap: 7px; }
+.catalog-table-scroll { max-height: 700px; overflow: auto; border: 1px solid #dce2e9; border-radius: 5px; background: #fff; }
+.catalog-table { width: 100%; min-width: 920px; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: .8125rem; line-height: 1.5; text-align: left; }
+.catalog-col-index { width: 4%; }
+.catalog-col-title { width: 27%; }
+.catalog-col-pi { width: 13%; }
+.catalog-col-unit { width: 11%; }
+.catalog-col-year { width: 7.5%; }
+.catalog-col-budget { width: 8%; }
+.catalog-col-status { width: 13.5%; }
+.catalog-col-grade { width: 9%; }
+.catalog-col-actions { width: 7%; }
+.catalog-table th { position: sticky; top: 0; z-index: 1; background: #f5f6f8; color: #536072; font-size: .75rem; font-weight: 600; white-space: nowrap; border-bottom: 1px solid #dce2e9; }
+.catalog-table th, .catalog-table td { padding: 12px 9px; vertical-align: top; }
+.catalog-table td { border-bottom: 1px solid #edf0f3; overflow-wrap: anywhere; }
+.catalog-table tbody tr:last-child td { border-bottom: 0; }
+.catalog-table tbody tr:hover { background: #fafbfc; }
+.catalog-table .catalog-number { text-align: right; font-variant-numeric: tabular-nums; }
+.catalog-index, .catalog-muted { color: #7a8595; }
+.catalog-sort { display: inline-flex; align-items: center; gap: 4px; font: inherit; color: inherit; text-align: inherit; white-space: normal; }
+.catalog-sort svg { flex-shrink: 0; opacity: .65; }
+.catalog-project-title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font: inherit; font-weight: 550; text-align: left; line-height: 1.5; color: #253044; }
+.catalog-project-title:hover { color: #0369a1; text-decoration: underline; text-underline-offset: 3px; }
+.catalog-secondary, .catalog-decision { font-size: .71875rem; color: #788394; margin-top: 4px; font-weight: 400; }
+.catalog-decision { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.catalog-pi { font-weight: 500; }
+.catalog-status { display: inline-flex; gap: 6px; align-items: baseline; font-size: .75rem; }
+.catalog-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; transform: translateY(-1px); }
+.catalog-status-DA_NGHIEM_THU::before { background: #36806a; }
+.catalog-status-QUA_HAN { color: #a84338; }
+.catalog-status-QUA_HAN::before { background: currentColor; }
+.catalog-row-actions { display: flex; gap: 4px; }
+.catalog-row-actions button, .catalog-row-actions a { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; min-height: 24px; color: #738095; }
+.catalog-row-actions button:hover, .catalog-row-actions a:hover { color: #0369a1; }
+.catalog-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+.catalog-pagination { display: flex; align-items: center; gap: 4px; font-size: .75rem; }
+.catalog-pagination button { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; border: 1px solid transparent; border-radius: 4px; color: #64748b; background: transparent; }
+.catalog-pagination button[aria-current='page'] { border-color: #cbd5e1; color: #1e293b; background: #fff; font-weight: 600; }
+.catalog-pagination button:hover:not(:disabled) { background: #f1f5f9; }
+.catalog-pagination span { color: #7a8595; margin-left: 8px; }
+.project-catalog button:disabled { opacity: .4; cursor: not-allowed; }
+.project-catalog :is(button, a, select):focus-visible, .catalog-table-scroll:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
+.catalog-empty { padding: 36px; text-align: center; font-size: .8125rem; }
+.catalog-empty button { color: #0369a1; margin-top: 10px; text-decoration: underline; }
+.staff-filter-bar { box-shadow: none; border-radius: 5px; }
+.staff-filter-bar .filter-row-bottom { flex-direction: column; align-items: stretch; gap: 8px; }
+.staff-filter-bar .filter-dropdowns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.staff-filter-bar .filter-group { align-items: stretch; flex-direction: column; gap: 4px; }
+.staff-filter-bar .filter-select { width: 100%; min-width: 0; font-size: .75rem; }
+.staff-filter-bar .filter-actions { justify-content: flex-end; }
+.staff-filter-bar .level-pill-btn { border-radius: 4px; font-size: .75rem; }
+.staff-filter-bar .level-pill-btn.active { background: #334155; border-color: #334155; color: #fff; box-shadow: none; }
+.staff-filter-bar .level-pill-btn.active .pill-count { background: rgba(255,255,255,.15); color: #fff; }
+.staff-filter-bar .result-count-badge { background: transparent; border: 0; color: #64748b; }
+.staff-filter-options { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid #edf0f3; font-size: .75rem; color: #64748b; }
+.staff-filter-options label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.staff-filter-options input { accent-color: #475569; }
+@media (max-width: 700px) { .catalog-tools { width: 100%; justify-content: space-between; } .catalog-footer { align-items: flex-start; } .catalog-pagination { flex-wrap: wrap; } .staff-filter-bar .filter-dropdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

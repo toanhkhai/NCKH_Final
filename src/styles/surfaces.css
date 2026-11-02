@@ -1,0 +1,310 @@
+/* Application finishes. Component files own grids, sizing and responsive layout. */
+.app-layout {
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.app-layout :is(button, input, select, textarea) { font-family: inherit; }
+.app-layout ::selection { color: #183b51; background: #dce8ee; }
+.app-layout .publications-dashboard,
+.app-layout .app-error-surface { color: var(--text-primary); background: var(--bg-app); font-family: var(--font-sans); }
+
+/* Surfaces: a quiet edge, with depth reserved for floating content. */
+.app-layout :is(
+  .glass-card, .kpi-card, .chart-card, .finance-card, .progress-mini-card,
+  .unit-summary-card, .filter-bar-card, .navbar-container, .table-controls-bar,
+  .table-responsive-wrapper, .researcher-search-card, .researcher-profile-card,
+  .dq-score-card, .dq-reconciliation-card, .empty-state-box,
+  .publication-panel, .publication-metric
+) {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: none;
+}
+.app-layout :is(.kpi-card, .finance-card, .progress-mini-card, .unit-summary-card, .publication-metric) {
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+.app-layout :is(.kpi-card, .finance-card, .progress-mini-card, .unit-summary-card, .publication-metric):hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+.app-layout :is(.kpi-card.clickable, .unit-summary-card):hover {
+  border-color: #9bb2bf;
+  background: #fdfefd;
+}
+.app-layout :is(.kpi-card, .finance-card, .progress-mini-card, .publication-metric) { padding: 20px; }
+.app-layout :is(.kpi-grid, .finance-kpi-grid, .progress-kpi-row) { gap: 16px; }
+.app-layout .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+/* Navigation keeps the same hierarchy, without framing every level as a card. */
+.app-layout .sidebar-container { background: #fdfefc; border-color: var(--border-card); }
+.app-layout .sidebar-header { border-color: var(--border-subtle); }
+.app-layout .logo-box { background: transparent; border-color: transparent; box-shadow: none; }
+.app-layout .school-abbr { color: #233f53; font-size: 16px; font-weight: 650; letter-spacing: .015em; }
+.app-layout .phase-text { color: var(--text-muted); font-size: 12px; }
+.app-layout .combined-nav-parent {
+  color: #3c4d57;
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: var(--border-subtle);
+  border-radius: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.app-layout .combined-nav-parent.current { color: #245574; background: transparent; border-color: transparent; border-bottom-color: var(--border-subtle); }
+.app-layout .combined-nav-parent:hover { background: #f0f3ef; }
+.app-layout .combined-nav-subgroup { color: #56656c; font-size: 13px; font-weight: 600; }
+.app-layout .combined-nav-subgroup.current { color: #294f65; }
+.app-layout .combined-nav-children { border-color: #e2e7e0; }
+.app-layout .combined-nav-level3 .nav-item-btn { color: #55636b; font-size: 13px; font-weight: 400; line-height: 1.5; border-radius: 3px; }
+.app-layout .nav-item-btn:hover { background: #f0f3ef; color: #263e4c; }
+.app-layout .nav-item-btn.active {
+  color: #204e6a;
+  background: #eaf0f2;
+  border-color: transparent;
+  box-shadow: inset 2px 0 #3d6a82;
+  font-weight: 600;
+}
+.app-layout .nav-icon { color: #78878c; }
+.app-layout .nav-item-btn.active .nav-icon { color: #315e79; }
+.app-layout :is(.nav-icon, .combined-nav-parent, .combined-nav-subgroup) > .lucide { stroke-width: 1.6; }
+.app-layout .sidebar-footer { border-color: var(--border-subtle); }
+.app-layout .sheet-source-card { color: var(--text-secondary); background: #f5f7f3; border-color: #e0e5dc; border-radius: 4px; box-shadow: none; }
+.app-layout :is(.sheet-source-title, .sheet-link) { color: var(--color-primary); }
+.app-layout .app-version-tag { color: var(--text-muted); font-size: 11px; }
+.app-layout .combined-mobile-bar { background: #fdfefc; color: #294a60; border-color: var(--border-card); font-weight: 600; }
+
+/* Headers and section hierarchy. */
+.app-layout .navbar-container { padding: 14px 20px; border-color: #dce2df; border-radius: 4px; }
+.app-layout .school-tag { color: #6a797e; font-size: 10px; letter-spacing: .06em; font-weight: 500; }
+.app-layout .system-title { color: #284555; font-size: 15px; font-weight: 600; letter-spacing: .005em; line-height: 1.5; }
+.app-layout .project-account { border-color: var(--border-card); border-radius: 4px; box-shadow: none; }
+.app-layout .project-account-details strong { color: var(--text-primary); font-weight: 600; }
+.app-layout .project-account-details small { color: var(--text-muted); }
+.app-layout .dashboard-data-status { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; color: var(--text-muted); font-size: 12px; }
+.app-layout :is(.view-title, .units-heading h2, .learner-heading h2) { color: #263e4a; font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1.45; }
+.app-layout :is(.view-subtitle, .units-heading p) { color: var(--text-muted); font-size: 13px; line-height: 1.65; margin-top: 6px; }
+.app-layout .view-intro-box { margin-bottom: 20px; }
+.app-layout :is(.chart-title, .recon-title, .section-title, .learner-card h3) { color: #344b57; font-size: 14px; font-weight: 600; letter-spacing: 0; line-height: 1.55; }
+.app-layout :is(.chart-note, .unit-chart-description, .learner-note, .catalog-data-note) { color: var(--text-muted); font-size: 12px; line-height: 1.65; }
+.app-layout .title-icon { color: #71878f; flex-shrink: 0; stroke-width: 1.6; }
+
+/* Metric cards: labels are readable, numbers carry the emphasis. */
+.app-layout :is(.kpi-title, .finance-sub, .mini-label) { color: var(--text-secondary); font-weight: 400; font-size: 13px; line-height: 1.5; }
+.app-layout .kpi-top { gap: 12px; min-height: 38px; margin-bottom: 14px; align-items: flex-start; }
+.app-layout :is(.kpi-value, .finance-val, .mini-val, .p-num, .score-num) { color: #263d48; font-family: var(--font-sans); font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.app-layout .kpi-value { font-size: 30px; line-height: 1.2; }
+.app-layout .kpi-bottom { margin-top: 6px; padding-bottom: 14px; gap: 6px; font-size: 12px; line-height: 1.55; }
+.app-layout .kpi-trend-pill { color: #496678; background: #f1f5f5; border: 0; border-radius: 3px; font-size: 11px; font-weight: 500; }
+.app-layout .kpi-subtitle { color: var(--text-muted); }
+.app-layout .kpi-progress-bar-bg { height: 3px; margin-top: auto; background: #edf0eb; border-radius: 0; }
+.app-layout .kpi-card .kpi-progress-bar-fill { background: #6c8b9d; border-radius: 0; }
+.app-layout .kpi-scheme-emerald .kpi-progress-bar-fill { background: #779b89; }
+.app-layout .kpi-scheme-amber .kpi-progress-bar-fill { background: #b49a6b; }
+.app-layout .kpi-scheme-rose .kpi-progress-bar-fill { background: #b38a7e; }
+.app-layout .kpi-card .kpi-icon-wrap,
+.app-layout :is(.finance-icon-box, .mini-icon-box) { width: 32px; height: 32px; flex-shrink: 0; color: #7d919a; border: 0; border-radius: 0; background: transparent; transform: none; }
+.app-layout :is(.kpi-icon-wrap, .finance-icon-box, .mini-icon-box) svg { width: 20px; height: 20px; stroke-width: 1.6; }
+.app-layout :is(.finance-card, .progress-mini-card) { gap: 14px; align-items: flex-start; }
+.app-layout :is(.finance-val, .mini-val) { font-size: 24px; line-height: 1.3; overflow-wrap: anywhere; }
+.app-layout :is(.finance-sub, .mini-label) { margin-top: 6px; font-size: 12px; }
+.app-layout .mini-icon-box.red { color: #a9685c; }
+.app-layout .mini-icon-box.amber { color: #a58b5e; }
+.app-layout .mini-icon-box.emerald { color: #658e7c; }
+
+/* Form controls share the same finish across the three dashboards. */
+.app-layout :is(.filter-bar-card, .learner-filters, .publication-filters) { padding: 16px 20px; }
+.app-layout :is(.filter-label, .learner-filters label, .publication-filters label) { color: #5f6d72; font-size: 12px; font-weight: 500; }
+.app-layout :is(.search-input, .filter-select, .researcher-input, .learner-filters input, .learner-filters select, .publication-filters input, .publication-filters select, .catalog-tools select, .page-select) {
+  color: #344b57;
+  background: #fdfefd;
+  border: 1px solid #cfd8d5;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 2px #27343b03;
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.app-layout :is(input, textarea)::placeholder { color: var(--text-muted); opacity: 1; }
+.app-layout :is(.search-input, .filter-select, .researcher-input, .learner-filters input, .learner-filters select, .publication-filters input, .publication-filters select, .catalog-tools select, .page-select):hover { border-color: #acbdbf; }
+.app-layout :is(.search-input, .filter-select, .researcher-input, .learner-filters input, .learner-filters select, .publication-filters input, .publication-filters select, .catalog-tools select, .page-select):focus { border-color: var(--border-focus); box-shadow: 0 0 0 2px #315e7918; outline: none; }
+.app-layout .search-icon { color: #8b989c; stroke-width: 1.7; }
+.app-layout .level-pill-btn { color: #627178; background: #fff; border-color: #dde3df; border-radius: 3px; box-shadow: none; font-size: 12px; font-weight: 400; }
+.app-layout .level-pill-btn:hover { background: #f2f5f2; border-color: #c2cfc9; }
+.app-layout .level-pill-btn.active { color: #2b536b; background: #edf3f4; border-color: #aec1ca; font-weight: 600; box-shadow: inset 0 -1px #aec1ca; }
+.app-layout .level-pill-btn.active .pill-count { color: #345d74; background: transparent; }
+.app-layout .pill-count { color: #7a898d; font-size: 11px; font-weight: 500; }
+.app-layout .staff-filter-options { color: var(--text-muted); border-color: var(--border-subtle); font-size: 12px; }
+.app-layout input[type='checkbox'] { accent-color: #315e79; }
+.app-layout .staff-filter-bar .result-count-badge { color: var(--text-muted); background: transparent; border: 0; font-size: 12px; font-weight: 400; }
+.app-layout .learner-filter-count { color: #5f767e; font-size: 12px; }
+
+/* Buttons, links and status labels. */
+.app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600) { color: #fff; background: #285a77; border: 1px solid #285a77; border-radius: 4px; box-shadow: inset 0 1px #ffffff0d; font-weight: 500; transition: background-color 120ms ease, border-color 120ms ease; }
+.app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600):hover { background: #1e4862; border-color: #1e4862; box-shadow: none; transform: none; }
+.app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600):active { background: #173c54; }
+.app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export) { color: #4a606b; background: #fff; border: 1px solid #ced8d6; border-radius: 4px; box-shadow: 0 1px 1px #27343b04; font-weight: 500; font-size: 12px; }
+.app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export):hover { color: #274f65; background: #f1f5f3; border-color: #9eb5bc; }
+.app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export):active { background: #e8efec; }
+.app-layout :is(button, a) > .lucide { stroke-width: 1.7; }
+.app-layout :is(button, select, input, a, [role='button']):focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
+.app-layout :is(button, input, select):disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+.app-layout .dashboard-data-status button:disabled { cursor: wait; }
+.app-layout :is(.badge, .unit-badge, .level-badge-inline, .drawer-level-tag, .severity-tag, .stt-badge) { border-radius: 3px; font-size: 11px; font-weight: 500; letter-spacing: 0; }
+.app-layout :is(.badge-primary, .unit-badge, .drawer-level-tag) { color: #4b6c7c; background: #f0f5f5; border-color: #dce6e7; }
+.app-layout .badge-success { color: #3c7458; background: #f1f7f0; border-color: #dce9d9; }
+.app-layout .badge-warning { color: #866529; background: #faf7ed; border-color: #e9dfc7; }
+.app-layout .badge-danger { color: #a45347; background: #fbf2ef; border-color: #ecdcd5; }
+.app-layout .badge-neutral { color: #65747b; background: #f3f5f2; border-color: #e1e6df; }
+.app-layout .stt-badge { color: var(--text-muted); background: #f3f5f2; }
+.app-layout :is(.text-success, .text-emerald-600, .text-emerald-700) { color: var(--color-success); }
+.app-layout :is(.text-warning, .text-amber-600, .text-amber-700) { color: var(--color-warning); }
+.app-layout :is(.text-danger, .text-red-600, .text-rose-600) { color: var(--color-danger); }
+.app-layout :is(.text-blue-600, .text-blue-700, .text-sky-600) { color: var(--color-primary); }
+.app-layout :is(.proof-link, .sheet-link, .learner-title-link, .btn-sheet-jump) { color: #2d607c; text-underline-offset: 3px; }
+.app-layout :is(.proof-link, .sheet-link, .learner-title-link, .btn-sheet-jump):hover { color: #163e58; text-decoration: underline; }
+.app-layout :is(.btn-sheet-jump, .btn-inspect-mini, .view-detail-mini-btn) { border-radius: 3px; font-size: 12px; font-weight: 500; }
+
+/* Charts and tables retain their existing dimensions and columns. */
+.app-layout :is(.chart-card, .summary-matrix-card) { padding: 20px; min-width: 0; }
+.app-layout .chart-card-header { padding-bottom: 12px; margin-bottom: 16px; gap: 12px; border-bottom: 1px solid var(--border-subtle); }
+.app-layout :is(.modern-table, .catalog-table, .learner-table, .recon-table, .summary-table, .mini-data-table) { color: #34464f; font-family: var(--font-sans); }
+.app-layout :is(.modern-table, .catalog-table, .learner-table, .recon-table, .summary-table, .mini-data-table) th { color: #5c6c71; background: #f4f6f2; border-color: #dce3da; font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; line-height: 1.5; }
+.app-layout :is(.modern-table, .catalog-table, .learner-table, .recon-table, .summary-table, .mini-data-table) td { border-color: #e9ede6; font-size: 13px; line-height: 1.55; }
+.app-layout :is(.modern-table, .catalog-table, .learner-table, .mini-data-table) tbody tr:nth-child(even) { background: #fcfdfb; }
+.app-layout :is(.modern-table, .catalog-table, .learner-table, .mini-data-table) tbody tr:hover { background: #f1f5f3; }
+.app-layout :is(.modern-table, .catalog-table, .learner-table) small { color: var(--text-muted); font-size: 11px; }
+.app-layout .catalog-table-scroll { border-color: #d5ded7; border-radius: 4px; }
+.app-layout .catalog-project-title { color: #2e5063; font-weight: 500; }
+.app-layout .catalog-project-title:hover { color: #204e6a; text-underline-offset: 3px; }
+.app-layout :is(.catalog-secondary, .catalog-decision, .catalog-muted) { color: var(--text-muted); }
+.app-layout .catalog-toolbar h2 { color: #294350; font-size: 18px; font-weight: 600; letter-spacing: -.015em; }
+.app-layout .catalog-status { color: #68767b; font-size: 12px; }
+.app-layout .catalog-status-QUA_HAN { color: var(--color-danger); }
+.app-layout .catalog-row-actions :is(button, a) { border-radius: 3px; }
+.app-layout .catalog-row-actions :is(button, a):hover { color: var(--color-primary); background: #e9f0f2; }
+.app-layout :is(.catalog-footer, .catalog-footer p, .learner-pagination, .pagination-bar) { color: var(--text-muted); font-size: 12px; }
+.app-layout .catalog-pagination button { color: #5a6d76; border-radius: 3px; }
+.app-layout .catalog-pagination button[aria-current='page'] { color: #244f69; background: #edf3f4; border-color: #b8cbd0; font-weight: 600; }
+.app-layout .catalog-pagination button:hover:not(:disabled) { background: #eaf0ed; }
+.app-layout .issues-table-card .table-responsive-wrapper { border: 0; border-radius: inherit; box-shadow: none; }
+.app-layout .recon-table-wrapper { overflow-x: auto; }
+.app-layout .recon-table .num-col { font-variant-numeric: tabular-nums; }
+
+/* Secondary content uses restrained insets rather than another raised card. */
+.app-layout :is(.drawer-section, .pi-highlight-card, .member-item, .profile-stats-row, .profile-project-item, .cancellation-item, .warning-item, .empty-guide-card) { border-color: #e0e6df; border-radius: 4px; box-shadow: none; }
+.app-layout :is(.pi-highlight-card, .profile-stats-row, .empty-guide-card) { background: #f5f8f3; }
+.app-layout :is(.drawer-section-title, .profile-name, .score-heading, .drawer-project-title) { color: #304955; font-weight: 600; }
+.app-layout .researcher-input { color: var(--text-primary); }
+.app-layout .researcher-results-dropdown { border-color: #cfdad6; border-radius: 4px; box-shadow: 0 6px 18px #243b4a14; }
+.app-layout .researcher-result-item:hover { background: #edf3f1; }
+.app-layout .result-name { color: #2e4d5e; font-weight: 500; }
+.app-layout .result-meta { color: var(--text-muted); }
+.app-layout .profile-name { font-size: 20px; letter-spacing: -.015em; }
+.app-layout :is(.pi-avatar, .profile-avatar) { color: #537481; background: #edf3f2; border: 1px solid #dce5e0; }
+.app-layout .score-circle { background: #f7f9f5; border: 2px solid #93aaa0; }
+.app-layout .score-num { color: #537563; }
+.app-layout .score-label { color: var(--text-muted); font-weight: 400; font-size: 11px; }
+.app-layout .score-heading { font-size: 17px; }
+.app-layout .score-desc { color: var(--text-secondary); font-size: 13px; line-height: 1.65; }
+.app-layout .severity-tag { color: #6f7880; background: #f3f5f1; }
+.app-layout .severity-tag.medium { color: #8c6c31; background: #f8f4e9; }
+.app-layout .severity-tag.high { color: #a45347; background: #faefeb; }
+.app-layout .cancellation-item { background: #fcfdfb; }
+.app-layout .cancellation-name { color: #56666d; font-size: 13px; line-height: 1.6; font-weight: 500; }
+.app-layout .cancellation-bar-bg { height: 4px; background: #edece6; border-radius: 0; }
+.app-layout .cancellation-bar-fill { background: #b59a83; border-radius: 0; }
+.app-layout .warning-item { background: #fff; border-color: #eadfcc; }
+.app-layout .warning-item:hover { background: #fcfaf4; }
+.app-layout .warning-title { color: #3d515a; font-size: 13px; font-weight: 500; }
+.app-layout .warning-meta { color: var(--text-muted); font-size: 12px; }
+.app-layout .empty-icon-wrapper { color: #728a93; background: #f4f7f2; border-color: #e1e8dc; }
+.app-layout .empty-title { color: #354f5b; font-size: 18px; font-weight: 600; }
+.app-layout .empty-desc { color: var(--text-muted); font-size: 13px; line-height: 1.65; }
+.app-layout .reconciliation-banner { color: #53725e; background: #f3f8f0; border-color: #dce7d6; box-shadow: none; font-size: 13px; }
+
+/* Learner records and native detail dialog. */
+.app-layout .learner-metric { padding: 20px; border-top: 1px solid var(--border-card); gap: 12px; }
+.app-layout .learner-metric span { min-height: 3em; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.app-layout .learner-metric strong { color: #2b424e; font-size: 29px; font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.app-layout .learner-metric small { color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+.app-layout .learner-card { padding: 20px; }
+.app-layout .learner-card h3 { padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); }
+.app-layout .learner-heading > div > p { color: var(--text-muted); font-size: 12px; }
+.app-layout .learner-alert { color: #85682f; background: #fbf8ed; border-color: #e7debf; border-radius: 4px; font-size: 13px; box-shadow: none; }
+.app-layout .learner-discrepancy { color: #936c2d; font-weight: 600; }
+.app-layout .learner-title-link { font-weight: 500; }
+
+/* Publications use the same type scale, controls and border treatment. */
+.app-layout .publication-header { color: #294555; background: #fdfefc; border-color: var(--border-card); box-shadow: none; }
+.app-layout .publication-header h1 { color: #294555; font-weight: 600; letter-spacing: -.01em; }
+.app-layout .publication-filters { margin-bottom: 20px; }
+.app-layout .publication-filters .uppercase { color: var(--text-muted); font-size: 12px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.app-layout .publication-metric { display: flex; flex-direction: column; justify-content: space-between; min-height: 126px; }
+.app-layout .publication-metric p:first-child { color: var(--text-secondary); font-size: 13px; font-weight: 400; text-transform: none; letter-spacing: 0; line-height: 1.5; }
+.app-layout .publication-metric h3 { color: #2b424e; font-size: 30px; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.app-layout .publication-metric .bg-blue-50,
+.app-layout .publication-metric .bg-emerald-50,
+.app-layout .publication-metric .bg-amber-50,
+.app-layout .publication-metric .bg-cyan-50 { color: #78909a; background: transparent; border-color: transparent; box-shadow: none; }
+.app-layout .publication-chart { padding: 20px; }
+.app-layout .publication-chart-title { color: #344b57; font-size: 14px; font-weight: 600; text-transform: none; letter-spacing: 0; line-height: 1.55; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+.app-layout .publication-chart-marker { width: 4px; height: 12px; background: #8da7b0; border-radius: 0; box-shadow: none; flex-shrink: 0; }
+.app-layout .publication-table h3 { color: #294350; font-size: 18px; font-weight: 600; }
+.app-layout .publication-table thead { background: #f4f6f2; color: #5c6c71; text-transform: none; letter-spacing: 0; }
+.app-layout .publication-table :is(th, td) { border-color: #e4e9e0; }
+.app-layout .publication-table th { font-weight: 600; font-size: 12px; }
+.app-layout .publication-guest { padding: 24px; }
+.app-layout .publication-guest h3 { color: #304955; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+.app-layout .publication-guest-detail { background: #f7f9f4; border-color: #e0e7db; border-radius: 4px; }
+.app-layout .publication-notice { color: #4c6c7c; background: #f0f5f5; border: 1px solid #d8e4e5; border-radius: 4px; }
+.app-layout .publications-dashboard > footer { background: #fdfefc; border-color: var(--border-card); color: var(--text-muted); }
+.app-layout .recharts-default-tooltip { border-color: #cfdbd6 !important; border-radius: 4px; box-shadow: 0 3px 12px #263b4612; font-family: var(--font-sans); font-size: 12px; }
+
+/* Floating layers have a little more depth; their layout stays with the component. */
+.app-layout .drawer-overlay { background: #23384150; backdrop-filter: none; }
+.app-layout .drawer-panel { border-color: #cfdad4; box-shadow: -6px 0 24px #2338411a; animation-duration: 160ms; }
+.app-layout .drawer-header { background: #f7f9f4; border-color: var(--border-subtle); }
+.app-layout .drawer-project-title { color: #2c4859; font-size: 19px; line-height: 1.6; letter-spacing: -.015em; }
+.app-layout .drawer-project-code { color: var(--text-muted); font-size: 12px; }
+.app-layout .drawer-section-title { color: #435e6a; font-size: 13px; letter-spacing: 0; }
+.app-layout .drawer-body { background: var(--bg-app); gap: 16px; }
+.app-layout .field-label { color: #78858a; font-size: 12px; }
+.app-layout .field-value { color: #344b57; font-size: 13px; font-weight: 500; }
+.app-layout .drawer-alerts-box { display: flex; flex-direction: column; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--border-subtle); background: #fff; }
+.app-layout .drawer-alert { display: flex; align-items: flex-start; gap: 8px; padding: 9px 12px; color: #85682f; background: #fbf8ed; border: 1px solid #e7debf; border-radius: 3px; font-size: 12px; line-height: 1.6; }
+.app-layout .drawer-alert svg { flex-shrink: 0; width: 14px; height: 14px; margin-top: 2px; }
+.app-layout .drawer-alert.alert-low { color: #537380; background: #f2f6f6; border-color: #dce5e4; }
+.app-layout .drawer-alert.alert-high { color: #a45347; background: #fbf2ef; border-color: #ecdcd5; }
+.app-layout :is(.app-dialog, .learner-dialog) { color: var(--text-primary); background: #fff; border: 1px solid #cbd8d2; border-radius: 6px; box-shadow: 0 16px 48px #23384129; font-family: var(--font-sans); }
+.app-layout :is(.backdrop-blur-xs, .backdrop-blur-sm):has(> .app-dialog) { background: #23384160; backdrop-filter: none; }
+.app-layout .app-dialog :is(h2, h3, h4),
+.app-layout .learner-dialog h2 { color: #2c4859; font-weight: 600; }
+.app-layout .app-dialog :is(.rounded-xl, .rounded-lg) { border-radius: 4px; }
+.app-layout .app-dialog :is(input, select, textarea) { border-color: #cfd8d5; border-radius: 4px; }
+.app-layout .app-dialog-inset { background: #f5f8f3; border-color: #dce5d7; border-radius: 4px; }
+.app-layout .learner-dialog::backdrop { background: #23384170; }
+.app-layout .learner-dialog dt { color: var(--text-muted); font-size: 12px; }
+.app-layout .learner-dialog dd { color: #344b57; font-size: 13px; }
+.app-layout .learner-dialog dl > div { border-color: var(--border-subtle); }
+.app-layout :is(.drawer-close-btn, .learner-dialog header button) { color: #78898e; border-radius: 3px; }
+.app-layout :is(.drawer-close-btn, .learner-dialog header button):hover { color: #294f65; background: #e9f0ec; }
+.app-layout .live-dot::after { display: none; }
+.app-layout .animate-fade-in { animation: none; }
+
+@media (max-width: 640px) {
+  .app-layout :is(.kpi-card, .finance-card, .progress-mini-card, .publication-metric, .learner-metric, .learner-card, .chart-card, .publication-chart, .summary-matrix-card) { padding: 16px; }
+  .app-layout :is(.filter-bar-card, .learner-filters, .publication-filters, .navbar-container) { padding: 14px 16px; }
+  .app-layout :is(.view-title, .units-heading h2, .learner-heading h2) { font-size: 20px; }
+  .app-layout .kpi-value { font-size: 28px; }
+  .app-layout .kpi-top { margin-bottom: 10px; }
+  .app-layout .kpi-grid { grid-template-columns: 1fr; gap: 12px; }
+  .app-layout .dq-score-card { flex-wrap: wrap; gap: 16px; padding: 18px; }
+  .app-layout .profile-header { flex-wrap: wrap; gap: 14px; }
+  .app-layout .warning-item { flex-wrap: wrap; gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-layout :is(.glass-card, .publication-panel, .publication-metric, .kpi-icon-wrap, .drawer-panel) { transition: none; animation: none; }
+}

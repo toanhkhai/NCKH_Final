@@ -1,0 +1,415 @@
+{
+  "capturedAt": "2026-11-02T14:23:13.871Z",
+  "readOnly": true,
+  "sources": [
+    {
+      "dataset": "staff",
+      "id": "summary",
+      "gid": "844694624",
+      "readAt": "2026-11-02T14:23:13.001Z",
+      "sha256": "4919a0863efbbdaea58216299f1bcdcc184dc154784f601e309419a9ffa11bd7",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=844694624#gid=844694624"
+    },
+    {
+      "dataset": "staff",
+      "id": "truong",
+      "gid": "1326842216",
+      "readAt": "2026-11-02T14:23:13.274Z",
+      "sha256": "b29d6a087bfce639450f921760195cc0c35d9845d0f3a9ba8301a53258200550",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=1326842216#gid=1326842216"
+    },
+    {
+      "dataset": "staff",
+      "id": "tinh",
+      "gid": "80327175",
+      "readAt": "2026-11-02T14:23:12.932Z",
+      "sha256": "c04af29d780825696d0e0ac1a8710eca312ae39fea4084e94ae044692cdc6123",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=80327175#gid=80327175"
+    },
+    {
+      "dataset": "staff",
+      "id": "bo",
+      "gid": "1053013808",
+      "readAt": "2026-11-02T14:23:12.937Z",
+      "sha256": "7953c8bb604e50e6e0a8a1aedfe5e9401ae77a19f6fa697ff758bddb387f35c9",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=1053013808#gid=1053013808"
+    },
+    {
+      "dataset": "staff",
+      "id": "quoc_gia",
+      "gid": "660559511",
+      "readAt": "2026-11-02T14:23:12.842Z",
+      "sha256": "694fc65c4a8b21fe312c076b7f7e3816fa84d818649a6bd9e06b0275d7327e3a",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=660559511#gid=660559511"
+    },
+    {
+      "dataset": "staff",
+      "id": "htqt",
+      "gid": "603726587",
+      "readAt": "2026-11-02T14:23:12.997Z",
+      "sha256": "694fc65c4a8b21fe312c076b7f7e3816fa84d818649a6bd9e06b0275d7327e3a",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1NpS0QE4tY0xPxkhQxZimyXwGk0R4a5bg/edit?gid=603726587#gid=603726587"
+    },
+    {
+      "dataset": "learners",
+      "id": "summary",
+      "gid": "844694624",
+      "readAt": "2026-11-02T14:23:12.776Z",
+      "sha256": "692ab2781783834b407005bad0d0288cccdb82aa89cd26cc52510d32162b2f28",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1C6OhjeY0QCMsQnHaQUz7_Hg-I5jnYx02/edit?gid=844694624#gid=844694624"
+    },
+    {
+      "dataset": "learners",
+      "id": "detail",
+      "gid": "1326842216",
+      "readAt": "2026-11-02T14:23:13.386Z",
+      "sha256": "ad4d76f6a94779c6fc3ef272d972f6a085859b994dfd9e91cabf43a552271fe3",
+      "proxyMatchesDirect": true,
+      "source": "https://docs.google.com/spreadsheets/d/1C6OhjeY0QCMsQnHaQUz7_Hg-I5jnYx02/edit?gid=1326842216#gid=1326842216"
+    }
+  ],
+  "staff": {
+    "sources": [
+      {
+        "id": "truong",
+        "rawCount": 705,
+        "parsedCount": 705,
+        "independentBudget": 10546,
+        "parsedBudget": 10546,
+        "independentAccepted": 271,
+        "parsedAccepted": 271,
+        "mappingDifferences": [],
+        "missingBudgetRows": [
+          376
+        ],
+        "unknownFlags": {
+          "accepted": 434,
+          "stopped": 610,
+          "extended": 556,
+          "liquidated": 705,
+          "sponsored": 704,
+          "enterprise": 705,
+          "international": 704
+        }
+      },
+      {
+        "id": "tinh",
+        "rawCount": 0,
+        "parsedCount": 0,
+        "independentBudget": 0,
+        "parsedBudget": 0,
+        "independentAccepted": 0,
+        "parsedAccepted": 0,
+        "mappingDifferences": [],
+        "missingBudgetRows": [],
+        "unknownFlags": {
+          "accepted": 0,
+          "stopped": 0,
+          "extended": 0,
+          "liquidated": 0,
+          "sponsored": 0,
+          "enterprise": 0,
+          "international": 0
+        }
+      },
+      {
+        "id": "bo",
+        "rawCount": 0,
+        "parsedCount": 0,
+        "independentBudget": 0,
+        "parsedBudget": 0,
+        "independentAccepted": 0,
+        "parsedAccepted": 0,
+        "mappingDifferences": [],
+        "missingBudgetRows": [],
+        "unknownFlags": {
+          "accepted": 0,
+          "stopped": 0,
+          "extended": 0,
+          "liquidated": 0,
+          "sponsored": 0,
+          "enterprise": 0,
+          "international": 0
+        }
+      },
+      {
+        "id": "quoc_gia",
+        "rawCount": 0,
+        "parsedCount": 0,
+        "independentBudget": 0,
+        "parsedBudget": 0,
+        "independentAccepted": 0,
+        "parsedAccepted": 0,
+        "mappingDifferences": [],
+        "missingBudgetRows": [],
+        "unknownFlags": {
+          "accepted": 0,
+          "stopped": 0,
+          "extended": 0,
+          "liquidated": 0,
+          "sponsored": 0,
+          "enterprise": 0,
+          "international": 0
+        }
+      },
+      {
+        "id": "htqt",
+        "rawCount": 0,
+        "parsedCount": 0,
+        "independentBudget": 0,
+        "parsedBudget": 0,
+        "independentAccepted": 0,
+        "parsedAccepted": 0,
+        "mappingDifferences": [],
+        "missingBudgetRows": [],
+        "unknownFlags": {
+          "accepted": 0,
+          "stopped": 0,
+          "extended": 0,
+          "liquidated": 0,
+          "sponsored": 0,
+          "enterprise": 0,
+          "international": 0
+        }
+      }
+    ],
+    "reconciliation": {
+      "period": "2021-2030",
+      "detailsComplete": true,
+      "tab1TotalAssigned": 705,
+      "tab1TotalAccepted": 271,
+      "tab1TotalBudget": 10529,
+      "detailedTotalAssigned": 705,
+      "detailedTotalAccepted": 271,
+      "detailedTotalBudget": 10546,
+      "isBalanced": false,
+      "discrepancyNote": "Kỳ 2021-2030. Tổng hợp: 705 đề tài, 10.529 triệu đồng. Chi tiết đã đọc: 705 đề tài, 10.546 triệu đồng; cần đối chiếu phần thiếu hoặc chênh lệch."
+    },
+    "annual": [
+      {
+        "period": "2021",
+        "summaryCount": 134,
+        "detailCount": 134,
+        "summaryBudget": 1658,
+        "detailKnownBudget": 1658,
+        "summaryAcceptedByAssigned": 84,
+        "detailAcceptedByAssigned": 84,
+        "summaryAcceptedByStats": 1,
+        "detailAcceptedByStats": 1
+      },
+      {
+        "period": "2022",
+        "summaryCount": 92,
+        "detailCount": 92,
+        "summaryBudget": 1453,
+        "detailKnownBudget": 1453,
+        "summaryAcceptedByAssigned": 62,
+        "detailAcceptedByAssigned": 62,
+        "summaryAcceptedByStats": 39,
+        "detailAcceptedByStats": 39
+      },
+      {
+        "period": "2023",
+        "summaryCount": 117,
+        "detailCount": 117,
+        "summaryBudget": 1686,
+        "detailKnownBudget": 1686,
+        "summaryAcceptedByAssigned": 68,
+        "detailAcceptedByAssigned": 68,
+        "summaryAcceptedByStats": 52,
+        "detailAcceptedByStats": 52
+      },
+      {
+        "period": "2024",
+        "summaryCount": 137,
+        "detailCount": 137,
+        "summaryBudget": 2166,
+        "detailKnownBudget": 2166,
+        "summaryAcceptedByAssigned": 46,
+        "detailAcceptedByAssigned": 46,
+        "summaryAcceptedByStats": 71,
+        "detailAcceptedByStats": 71
+      },
+      {
+        "period": "2025",
+        "summaryCount": 172,
+        "detailCount": 172,
+        "summaryBudget": 2755,
+        "detailKnownBudget": 2772,
+        "summaryAcceptedByAssigned": 11,
+        "detailAcceptedByAssigned": 11,
+        "summaryAcceptedByStats": 77,
+        "detailAcceptedByStats": 77
+      },
+      {
+        "period": "2026",
+        "summaryCount": 53,
+        "detailCount": 53,
+        "summaryBudget": 811,
+        "detailKnownBudget": 811,
+        "summaryAcceptedByAssigned": 0,
+        "detailAcceptedByAssigned": 0,
+        "summaryAcceptedByStats": 31,
+        "detailAcceptedByStats": 31
+      },
+      {
+        "period": "2027",
+        "summaryCount": 0,
+        "detailCount": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0,
+        "summaryAcceptedByAssigned": 0,
+        "detailAcceptedByAssigned": 0,
+        "summaryAcceptedByStats": 0,
+        "detailAcceptedByStats": 0
+      },
+      {
+        "period": "2028",
+        "summaryCount": 0,
+        "detailCount": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0,
+        "summaryAcceptedByAssigned": 0,
+        "detailAcceptedByAssigned": 0,
+        "summaryAcceptedByStats": 0,
+        "detailAcceptedByStats": 0
+      },
+      {
+        "period": "2029",
+        "summaryCount": 0,
+        "detailCount": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0,
+        "summaryAcceptedByAssigned": 0,
+        "detailAcceptedByAssigned": 0,
+        "summaryAcceptedByStats": 0,
+        "detailAcceptedByStats": 0
+      },
+      {
+        "period": "2030",
+        "summaryCount": 0,
+        "detailCount": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0,
+        "summaryAcceptedByAssigned": 0,
+        "detailAcceptedByAssigned": 0,
+        "summaryAcceptedByStats": 0,
+        "detailAcceptedByStats": 0
+      }
+    ],
+    "unitDifferences": [],
+    "annualSummaryBudget": 10529,
+    "duplicateCodeRows": [
+      [
+        381,
+        382
+      ]
+    ],
+    "unknownYearRows": []
+  },
+  "learners": {
+    "totals": {
+      "period": "2021-2030",
+      "official": 997,
+      "detailed": 997,
+      "missing": 0,
+      "excess": 0
+    },
+    "rawCount": 997,
+    "parsedCount": 997,
+    "mappingDifferences": [],
+    "declaredDetailTotal": 1007,
+    "detailKnownBudget": 5152,
+    "summaryBudget": 5152,
+    "duplicateCodeRows": [],
+    "unknownFlags": {
+      "accepted": 997,
+      "cancelled": 997,
+      "extended": 997,
+      "liquidated": 997,
+      "sponsored": 997,
+      "enterprise": 997,
+      "international": 997
+    },
+    "annual": [
+      {
+        "period": "2021",
+        "official": 157,
+        "detailed": 157,
+        "summaryBudget": 790,
+        "detailKnownBudget": 790
+      },
+      {
+        "period": "2022",
+        "official": 176,
+        "detailed": 176,
+        "summaryBudget": 877,
+        "detailKnownBudget": 877
+      },
+      {
+        "period": "2023",
+        "official": 142,
+        "detailed": 142,
+        "summaryBudget": 710,
+        "detailKnownBudget": 710
+      },
+      {
+        "period": "2024",
+        "official": 183,
+        "detailed": 183,
+        "summaryBudget": 915,
+        "detailKnownBudget": 915
+      },
+      {
+        "period": "2025",
+        "official": 197,
+        "detailed": 197,
+        "summaryBudget": 1055,
+        "detailKnownBudget": 1055
+      },
+      {
+        "period": "2026",
+        "official": 142,
+        "detailed": 142,
+        "summaryBudget": 805,
+        "detailKnownBudget": 805
+      },
+      {
+        "period": "2027",
+        "official": 0,
+        "detailed": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0
+      },
+      {
+        "period": "2028",
+        "official": 0,
+        "detailed": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0
+      },
+      {
+        "period": "2029",
+        "official": 0,
+        "detailed": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0
+      },
+      {
+        "period": "2030",
+        "official": 0,
+        "detailed": 0,
+        "summaryBudget": 0,
+        "detailKnownBudget": 0
+      }
+    ]
+  },
+  "sourceDataNeedsReview": true
+}
