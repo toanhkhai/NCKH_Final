@@ -1,10 +1,38 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import Papa from 'papaparse';
-import { parseLearnerProjects, parseLearnerSummary, reconcileLearnerPeriod, getLearnerTotals, numberOrNull } from '../src/learners/data.ts';
+import { parseLearnerProjects, parseLearnerSummary, reconcileLearnerPeriod, getLearnerTotals, getLearnerSupervisors, getLearnerGroupSizes, numberOrNull } from '../src/learners/data.ts';
 
 const headers = ['STT', 'Tên đề tài', 'MSSV/MSHV chủ nhiệm', 'Năm bắt đầu', 'Năm kết thúc', 'Tháng kết thúc', 'Kinh phí (Triệu đồng)', 'Đề tài đã nghiệm thu (0-Không, 1-Có)', 'Đề tài hủy (0-Không, 1-Có)', 'Gia hạn đề tài (0-Không, 1-Có)', 'Thời gian gia hạn đề tài (Số tháng gia hạn)'];
 const csv = (rows) => Papa.unparse([headers, ...rows]);
+
+test('supervisor workload counts each staff member once per project and preserves distinct identities', () => {
+  const first = { name: 'Nguyễn An', staffId: 'CB01', unit: 'Khoa A' };
+  const namesake = { ...first, staffId: 'CB02' };
+  const withoutId = { name: 'Trần Bình', staffId: '', unit: 'Khoa B' };
+  const projects = [
+    { supervisors: [first, first, namesake, withoutId] },
+    { supervisors: [{ ...first, name: 'Nguyễn Văn An' }, { ...withoutId, name: '  TRẦN BÌNH ' }] },
+    { supervisors: [first] },
+  ];
+  const result = getLearnerSupervisors(projects);
+  assert.deepEqual(result.map((supervisor) => supervisor.count), [3, 2, 1]);
+  assert.equal(result[0].key, 'CB01');
+  assert.equal(result[2].key, 'CB02');
+  assert.equal(getLearnerSupervisors(projects.slice(2))[0].count, 1);
+  assert.deepEqual(getLearnerSupervisors([]), []);
+});
+
+test('learner group sizes count the leader and members, group five or more, and retain missing leaders', () => {
+  const projects = [0, 1, 2, 3, 4, 6].map((size) => ({
+    leader: 'Chủ nhiệm', members: Array.from({ length: size }, () => ({ name: 'Thành viên', className: '' })),
+  }));
+  projects.push({ leader: '', members: [{ name: 'Thành viên', className: '' }] });
+  assert.deepEqual(getLearnerGroupSizes(projects), [
+    ['1 người', 1], ['2 người', 1], ['3 người', 1], ['4 người', 1], ['Từ 5 người trở lên', 2], ['Chưa cập nhật chủ nhiệm', 1],
+  ]);
+  assert.deepEqual(getLearnerGroupSizes([]), []);
+});
 
 test('excludes totals, year headers and blank numbered slots; repeated STT has unique identities', () => {
   const result = parseLearnerProjects(csv([

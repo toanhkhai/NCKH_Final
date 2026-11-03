@@ -4,8 +4,8 @@
 
 ## Menu
 
-- **Đề tài KHCN → Đề tài Cán bộ:** Tổng quan điều hành, Theo 9 đơn vị, Tiến độ & nghiệm thu, Nhân sự nghiên cứu, Kinh phí & hợp tác, Danh mục đề tài, Chất lượng dữ liệu.
-- **Đề tài KHCN → Đề tài người học:** Tổng quan người học, Danh mục đề tài, Người học & hướng dẫn, Tiến độ & nghiệm thu, Kinh phí & sản phẩm, Chất lượng dữ liệu.
+- **Đề tài KHCN → Đề tài Cán bộ:** Tổng quan, Theo 9 đơn vị, Tiến độ & nghiệm thu, Nhân sự nghiên cứu, Kinh phí & hợp tác, Danh mục đề tài, Chất lượng dữ liệu.
+- **Đề tài KHCN → Đề tài người học:** Tổng quan, Danh mục đề tài, Người học & hướng dẫn, Tiến độ & nghiệm thu, Kinh phí & sản phẩm, Chất lượng dữ liệu.
 - **Công bố khoa học:** Tổng quan công bố, Bài báo trong nước, Bài báo quốc tế, Tra cứu bài báo.
 
 Menu hỗ trợ thu gọn/mở rộng từng nhóm, thiết bị di động và URL trực tiếp theo dạng `/projects/staff/overview`, `/projects/learners/overview` hoặc `/publications/source2`. Điều hướng dùng History API, hỗ trợ Back/Forward. Các link cũ có `/#/` và đường dẫn `/projects/overview` được tự đổi sang URL mới bằng `replaceState`, không thêm một bước thừa trong lịch sử. Bộ lọc của mỗi dashboard được giữ khi chuyển qua lại giữa các nhóm trong cùng phiên sử dụng. Xem [docs/routing.md](docs/routing.md) về cấu hình server khi triển khai.
@@ -67,4 +67,4 @@ Lệnh này chạy kiểm thử bộ đọc dữ liệu Người học, dữ li�
 
 Mã giao diện đề tài nằm trong `src/components`, `src/services`, `src/store`. Mã công bố nằm trong `src/nckh`. Điều hướng và bố cục chung nằm trong `src/App.tsx`, `src/components/common/Sidebar.tsx`, `src/styles/combined.css`.
 
-Mã dashboard người học nằm trong `src/learners`. Kiểm thử bộ đọc dữ liệu: `node --test tests/learners.test.mjs` (Node 22.18+ hoặc 24 để chạy TypeScript trực tiếp). Cả hai nhóm đề tài dùng chung tài khoản đăng nhập; hiện chưa giới hạn xem dữ liệu/chức năng theo tài khoản.
+Mã dashboard người học nằm trong `src/learners`. Kiểm thử bộ đọc dữ liệu: `node --test tests/learners.test.mjs` (Node 22.18+ hoặc 24 để chạy TypeScript trực tiếp). Hai nhóm đề tài dùng chung tài khoản và có hai chế độ: user (view 1, gồm khách và tài khoản thường) và admin (view 2, gồm tài khoản quản trị hoặc được ủy quyền hiện có). Quy tắc hiển thị tại [docs/project-access.md](docs/project-access.md).

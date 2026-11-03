@@ -2,6 +2,8 @@ import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { AlertCircle, Menu, RefreshCw } from 'lucide-react';
 import { ErrorBoundary } from './nckh/components/ErrorBoundary.jsx';
 import { LoginModal } from './nckh/components/LoginModal.jsx';
+import { useAuth } from './nckh/context/AuthContext.jsx';
+import { getProjectRole, resolveProjectAccessRoute, type ProjectAuth } from './services/projectAccess';
 import { useDashboard, type DashboardView } from './store/useDashboardStore';
 import { Sidebar, type PublicationView } from './components/common/Sidebar';
 import { Navbar } from './components/common/Navbar';
@@ -19,17 +21,24 @@ import { resolveRouteLocation, routePath, type Area, type Route } from './routin
 const PublicationsDashboard = lazy(() => import('./nckh/App.jsx'));
 const LearnerDashboard = lazy(() => import('./learners/LearnerDashboard'));
 
-function ProjectsDashboard({ view, onNavigate, onLogin }: { view: DashboardView; onNavigate: (view: DashboardView) => void; onLogin: () => void }) {
-  const { activeView, setActiveView, selectedProject, setSelectedProject, isLoading, error, refreshData, data } = useDashboard();
+function ProjectsDashboard({ view, isAdmin, onNavigate, onLogin }: { view: DashboardView; isAdmin: boolean; onNavigate: (view: DashboardView) => void; onLogin: () => void }) {
+  const { activeView, setActiveView, selectedProject, setSelectedProject, filters, updateFilters, isLoading, error, refreshData, data } = useDashboard();
+  const hideCatalogFields = !isAdmin && view === 'projects';
 
   useEffect(() => {
     if (activeView !== view) setActiveView(view);
   }, [activeView, setActiveView, view]);
 
+  useEffect(() => {
+    if (hideCatalogFields && (filters.status !== 'ALL' || filters.grade !== 'ALL' || filters.budgetRange[0] > 0 || Number.isFinite(filters.budgetRange[1]))) {
+      updateFilters({ status: 'ALL', grade: 'ALL', budgetRange: [0, Infinity] });
+    }
+  }, [hideCatalogFields, filters, updateFilters]);
+
   return (
     <main className="view-container">
       <Navbar onLogin={onLogin} title="ĐỀ TÀI CÁN BỘ — THỐNG KÊ KẾT QUẢ & HIỆU QUẢ KHCN" />
-      <FilterBar />
+      <FilterBar hideCatalogFields={hideCatalogFields} />
       {error && (
         <div role="alert" className="data-load-alert">
           <AlertCircle size={18} />
@@ -45,22 +54,24 @@ function ProjectsDashboard({ view, onNavigate, onLogin }: { view: DashboardView;
       )}
       {data && (
         <>
-          {activeView === 'overview' && <OverviewView />}
-          {activeView === 'units' && <UnitsView onOpenProjects={() => onNavigate('projects')} />}
-          {activeView === 'progress' && <ProgressView />}
-          {activeView === 'people' && <PeopleView />}
-          {activeView === 'finance' && <FinanceView />}
-          {activeView === 'projects' && <ProjectsTableView />}
-          {activeView === 'data-quality' && <DataQualityView />}
+          {view === 'overview' && <OverviewView isAdmin={isAdmin} />}
+          {view === 'units' && <UnitsView onOpenProjects={() => onNavigate('projects')} />}
+          {view === 'progress' && <ProgressView />}
+          {view === 'people' && <PeopleView />}
+          {view === 'finance' && <FinanceView />}
+          {view === 'projects' && <ProjectsTableView isAdmin={isAdmin} />}
+          {view === 'data-quality' && <DataQualityView />}
         </>
       )}
-      <ProjectDrawer project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <ProjectDrawer project={selectedProject} hideCatalogFields={hideCatalogFields} onClose={() => setSelectedProject(null)} />
     </main>
   );
 }
 
 export default function App() {
-  const [route, setRoute] = useState<Route>(() => resolveRouteLocation(window.location).route);
+  const projectRole = getProjectRole(useAuth() as unknown as ProjectAuth);
+  const [requestedRoute, setRoute] = useState<Route>(() => resolveRouteLocation(window.location).route);
+  const route = resolveProjectAccessRoute(requestedRoute, projectRole);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const openLogin = useCallback(() => setIsLoginOpen(true), []);
@@ -74,9 +85,11 @@ export default function App() {
   useEffect(() => {
     const onLocationChange = () => {
       const { route: next, replaceUrl } = resolveRouteLocation(window.location);
-      if (replaceUrl) window.history.replaceState(window.history.state, '', replaceUrl);
-      setRoute(next);
-      setVisited((previous) => ({ ...previous, [next.area]: true }));
+      const allowed = resolveProjectAccessRoute(next, projectRole);
+      const targetUrl = allowed !== next ? routePath(allowed) + window.location.search : replaceUrl;
+      if (targetUrl) window.history.replaceState(window.history.state, '', targetUrl);
+      setRoute(allowed);
+      setVisited((previous) => ({ ...previous, [allowed.area]: true }));
       setIsSidebarOpen(false);
     };
     onLocationChange();
@@ -86,13 +99,14 @@ export default function App() {
       window.removeEventListener('popstate', onLocationChange);
       window.removeEventListener('hashchange', onLocationChange);
     };
-  }, []);
+  }, [projectRole]);
 
   const navigate = (next: Route) => {
-    const path = routePath(next) + window.location.search;
+    const allowed = resolveProjectAccessRoute(next, projectRole);
+    const path = routePath(allowed) + window.location.search;
     if (window.location.pathname + window.location.search + window.location.hash !== path) window.history.pushState(null, '', path);
-    setRoute(next);
-    setVisited((previous) => ({ ...previous, [next.area]: true }));
+    setRoute(allowed);
+    setVisited((previous) => ({ ...previous, [allowed.area]: true }));
     setIsSidebarOpen(false);
   };
 
@@ -103,6 +117,7 @@ export default function App() {
         projectView={route.area === 'projects' ? route.view : 'overview'}
         publicationView={route.area === 'publications' ? route.view : 'all'}
         learnerView={route.area === 'learners' ? route.view : 'overview'}
+        projectRole={projectRole}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         onProjectSelect={(view) => navigate({ area: 'projects', view })}
@@ -116,7 +131,7 @@ export default function App() {
         </div>
         {visited.projects && (
           <div className="dashboard-pane projects-pane" hidden={route.area !== 'projects'}>
-            <ProjectsDashboard view={route.area === 'projects' ? route.view : 'overview'} onNavigate={(view) => navigate({ area: 'projects', view })} onLogin={openLogin} />
+            <ProjectsDashboard view={route.area === 'projects' ? route.view : 'overview'} isAdmin={projectRole === 'admin'} onNavigate={(view) => navigate({ area: 'projects', view })} onLogin={openLogin} />
           </div>
         )}
         {visited.publications && (

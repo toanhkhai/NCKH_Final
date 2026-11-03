@@ -17,6 +17,13 @@
 .catalog-col-status { width: 13.5%; }
 .catalog-col-grade { width: 9%; }
 .catalog-col-actions { width: 7%; }
+.catalog-table-user { min-width: 720px; }
+.catalog-table-user .catalog-col-index { width: 5%; }
+.catalog-table-user .catalog-col-title { width: 43%; }
+.catalog-table-user .catalog-col-pi { width: 20%; }
+.catalog-table-user .catalog-col-unit { width: 16%; }
+.catalog-table-user .catalog-col-year { width: 10%; }
+.catalog-table-user .catalog-col-actions { width: 6%; }
 .catalog-table th { position: sticky; top: 0; z-index: 1; background: #f5f6f8; color: #536072; font-size: .75rem; font-weight: 600; white-space: nowrap; border-bottom: 1px solid #dce2e9; }
 .catalog-table th, .catalog-table td { padding: 12px 9px; vertical-align: top; }
 .catalog-table td { border-bottom: 1px solid #edf0f3; overflow-wrap: anywhere; }

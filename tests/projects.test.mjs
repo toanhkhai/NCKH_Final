@@ -93,3 +93,12 @@ test('CSV exports the full selected result with escaped text, source rows and un
   assert.equal(rows[0]['Chủ nhiệm'], "'=TEST");
   assert.equal(rows[0]['Dòng nguồn'], String(a.sourceRow));
 });
+
+test('view 1 CSV omits budget, status and grade while retaining project identity and all selected rows', () => {
+  const projects = [make({ id: 'a' }), make({ id: 'b', title: 'Đề tài B' })];
+  const result = Papa.parse(exportProjectsCsv(projects, { includeAdminFields: false }), { header: true });
+  assert.equal(result.data.length, 2);
+  assert.equal(result.data[0]['Tên đề tài'], projects[0].title);
+  assert.equal(result.data[1]['Tên đề tài'], projects[1].title);
+  for (const field of ['Kinh phí (triệu đồng)', 'Trạng thái', 'Xếp loại']) assert.equal(result.meta.fields.includes(field), false);
+});

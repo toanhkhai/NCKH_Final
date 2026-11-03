@@ -59,13 +59,14 @@ export function projectPage(projects: Project[], page: number, pageSize: number)
   return { currentPage, totalPages, offset, rows: projects.slice(offset, offset + pageSize) };
 }
 
-export function exportProjectsCsv(projects: Project[]) {
+export function exportProjectsCsv(projects: Project[], { includeAdminFields = true }: { includeAdminFields?: boolean } = {}) {
   return '\uFEFF' + Papa.unparse(projects.map((p, index) => ({
     'STT': index + 1, 'STT trên Sheet': p.stt, 'Cấp đề tài': LEVEL_LABELS[p.level], 'Tên đề tài': p.title,
     'Mã số': p.code || '', 'Quyết định giao': p.assignDecision || '', 'Năm giao': projectAssignmentYear(p) ?? '',
     'Năm bắt đầu': p.startYear ?? '', 'Năm kết thúc': p.endYear ?? '', 'Đơn vị chủ trì': p.assigningUnit,
-    'Chủ nhiệm': p.pi.name, 'MSCB Chủ nhiệm': p.pi.staffId || '', 'Kinh phí (triệu đồng)': p.budgetKnown ? p.budget : '',
-    'Trạng thái': STATUS_LABELS[p.status], 'Xếp loại': GRADE_LABELS[p.grade], 'Quyết định nghiệm thu': p.acceptDecision || '',
+    'Chủ nhiệm': p.pi.name, 'MSCB Chủ nhiệm': p.pi.staffId || '',
+    ...(includeAdminFields ? { 'Kinh phí (triệu đồng)': p.budgetKnown ? p.budget : '', 'Trạng thái': STATUS_LABELS[p.status], 'Xếp loại': GRADE_LABELS[p.grade] } : {}),
+    'Quyết định nghiệm thu': p.acceptDecision || '',
     'Dòng nguồn': p.sourceRow, 'Google Sheet': projectSourceUrl(p),
   })), { escapeFormulae: true, newline: '\r\n' });
 }

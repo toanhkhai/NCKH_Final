@@ -18,8 +18,9 @@ import { EmptyState } from '../common/EmptyState';
 import { GRADE_COLORS, STATUS_COLORS, STATUS_LABELS, LEVEL_LABELS } from '../../types/project';
 import { yearSeries, budgetSummary, flagCount, isAcceptedProject } from '../../services/projectAnalytics';
 import { UNIT_COLORS, STANDARD_UNITS } from '../../config/units';
+import { buildUnitYearHeatmap } from '../../services/unitHeatmap';
 
-export const OverviewView: React.FC = () => {
+export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false }) => {
   const { data, filters, filteredProjects, theme, isLoading } = useDashboard();
 
   if (isLoading) {
@@ -143,6 +144,28 @@ export const OverviewView: React.FC = () => {
         itemStyle: { color: '#f59e0b' },
       },
     ],
+  };
+
+  const assignedByUnit = buildUnitYearHeatmap(projects);
+  const unitYearChartOption = {
+    backgroundColor: 'transparent',
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (value: number) => `${value.toLocaleString('vi-VN')} đề tài` },
+    legend: { type: 'scroll', top: 0, textStyle: { color: textColor } },
+    grid: { left: '3%', right: '4%', bottom: 35, top: 75, containLabel: true },
+    xAxis: {
+      type: 'category', name: 'Năm giao', nameLocation: 'middle', nameGap: 25, nameTextStyle: { color: textColor },
+      data: assignedByUnit.years.map((year) => year === null ? 'Chưa rõ' : String(year)),
+      axisLabel: { color: textColor }, axisLine: { lineStyle: { color: gridLineColor } },
+    },
+    yAxis: {
+      type: 'value', name: 'Số đề tài', minInterval: 1, nameTextStyle: { color: textColor },
+      axisLabel: { color: textColor }, splitLine: { lineStyle: { color: gridLineColor } },
+    },
+    series: assignedByUnit.units.map((unit, index) => ({
+      name: unit, type: 'bar', stack: 'assigned',
+      itemStyle: { color: UNIT_COLORS[unit] },
+      data: assignedByUnit.cells.filter(([, unitIndex]) => unitIndex === index).map(([, , count]) => count),
+    })),
   };
 
   // Chart 2: Status Donut Chart
@@ -402,11 +425,11 @@ export const OverviewView: React.FC = () => {
           <div className="chart-card-header">
             <div className="chart-title-box">
               <TrendingUp size={18} className="title-icon sky" />
-              <h3 className="chart-title">Số lượng Đề tài Giao, Nghiệm thu & Kinh phí qua các Năm</h3>
+              <h3 className="chart-title">{isAdmin ? 'Số lượng Đề tài Giao, Nghiệm thu & Kinh phí qua các Năm' : 'Các đề tài đã giao từng đơn vị theo năm'}</h3>
             </div>
           </div>
           <div className="chart-wrapper">
-            <ReactECharts option={trendChartOption} style={{ height: '340px', width: '100%' }} />
+            <ReactECharts option={isAdmin ? trendChartOption : unitYearChartOption} notMerge style={{ height: '340px', width: '100%' }} />
           </div>
         </div>
 

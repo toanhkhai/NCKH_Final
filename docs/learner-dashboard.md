@@ -10,7 +10,7 @@ Có hai tab: `TỔNG HƠP - Số tự động` (gid 844694624) và `Đề tài n
 | --- | --- | --- |
 | Tổng quan | Tổng chính thức, mức độ cập nhật hồ sơ; nghiệm thu, kinh phí và bài báo ghi nhận; phân bố đơn vị/năm | Số đề tài trên tab tổng hợp và thông tin hồ sơ chi tiết |
 | Danh mục đề tài | Tìm theo tên/mã/người tham gia, lọc, phân trang, xuất CSV, xem toàn bộ trường và minh chứng | Đọc cột theo nhãn của mẫu hiện tại, giữ các trường tùy chọn chưa có là chưa cập nhật |
-| Người học & hướng dẫn | Lượt chủ nhiệm/thành viên, lớp, khóa, phân công cán bộ hướng dẫn | MSSV/MSHV, lớp/khóa/niên khóa, 2 ô CBHD; số ô thành viên theo tiêu đề nguồn, hiện có 6 |
+| Người học & hướng dẫn | Lượt chủ nhiệm/thành viên, quy mô nhóm người học, 10 cán bộ hướng dẫn nhiều đề tài nhất, bảng phân công hướng dẫn | Chủ nhiệm và các ô thành viên đã khai báo; 2 ô CBHD gộp theo MSCB hoặc tên và đơn vị; áp dụng bộ lọc hiện tại |
 | Tiến độ & nghiệm thu | Gia hạn, hủy, tiến độ có đủ dữ liệu, xếp loại nghiệm thu và hồ sơ cần bổ sung | Thời gian bắt đầu/kết thúc, số tháng gia hạn, cờ trạng thái, xếp loại |
 | Kinh phí & sản phẩm | Kinh phí đã ghi nhận, thanh lý, tài trợ/hợp tác, bài báo và bài quốc tế | Kinh phí (triệu đồng), cờ thanh lý/tài trợ/hợp tác, bài báo, minh chứng |
 | Chất lượng dữ liệu | Thiếu mã người học, thời gian, kinh phí, trạng thái, minh chứng; so sánh dòng tổng và hồ sơ thực tế | Chi tiết và bảng tổng hợp |
@@ -25,7 +25,8 @@ Có hai tab: `TỔNG HƠP - Số tự động` (gid 844694624) và `Đề tài n
 - Nghiệm thu theo năm giao và nghiệm thu theo năm thống kê là hai chỉ tiêu khác nhau; không cộng hai cột này. Dòng tổng giai đoạn cũng không cộng thêm vào từng năm.
 - Bảng đối chiếu hiển thị tổng chính thức, số đề tài đã có chi tiết và số đề tài còn thiếu chi tiết theo từng kỳ. Dòng chưa có tên trên tab chi tiết được thống kê ở màn hình Chất lượng dữ liệu, không bị trừ khỏi tổng chính thức.
 - Nhân sự người học đếm lượt tham gia, chưa công bố số người duy nhất khi mã định danh còn thiếu. CBHD gộp theo MSCB; nếu thiếu thì theo tên và đơn vị, vì vậy các biến thể cách viết có thể tạo nhóm khác nhau.
-- Cả hai nhóm đề tài dùng chung đăng nhập, hiện hiển thị cùng dữ liệu/chức năng cho khách và người đã đăng nhập.
+- Quy mô nhóm người học tính bằng chủ nhiệm và số thành viên có tên đã khai báo, chia nhóm 1, 2, 3, 4 và từ 5 người trở lên; hồ sơ thiếu chủ nhiệm có nhóm riêng. Biểu đồ 10 cán bộ hướng dẫn nhiều đề tài nhất dùng thanh ngang giảm dần theo số đề tài trong bộ lọc, mỗi cán bộ chỉ tính một lần trong mỗi đề tài; không thêm thanh cộng gộp các cán bộ ngoài top 10.
+- Cả hai nhóm đề tài dùng chung đăng nhập. Khách và tài khoản thường dùng view 1; tài khoản quản trị hoặc được ủy quyền dùng view 2. Người học ở view 1 chỉ mở Tổng quan, Danh mục đề tài và Người học & hướng dẫn; view 2 giữ đủ sáu mục. Quy tắc chung tại [project-access.md](project-access.md).
 
 ## Kết quả đọc lại nguồn ngày 02/11/2026
 

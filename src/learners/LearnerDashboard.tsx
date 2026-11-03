@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import Papa from 'papaparse';
 import { Download, X } from 'lucide-react';
 import { Navbar } from '../components/common/Navbar';
-import { getLearnerTotals, loadLearnerData, searchText, countLearnerFlags, sumKnown, learnerChartGroups, type LearnerData, type LearnerProject, type LearnerView } from './data';
+import { getLearnerTotals, getLearnerSupervisors, getLearnerGroupSizes, loadLearnerData, searchText, countLearnerFlags, sumKnown, learnerChartGroups, type LearnerData, type LearnerProject, type LearnerView } from './data';
 import './learners.css';
 
 const titles: Record<LearnerView, string> = {
@@ -18,12 +18,14 @@ const group = (items: string[]) => Object.entries(items.reduce<Record<string, nu
 function Metric({ label, value, note }: { label: string; value: string | number; note?: string }) {
   return <div className="learner-metric glass-card"><span>{label}</span><strong>{value}</strong>{note && <small>{note}</small>}</div>;
 }
-function Bars({ title, values, showAll = false }: { title: string; values: [string, number][]; showAll?: boolean }) {
+function Bars({ title, values, showAll = false, note, labelWidth = 140, minHeight = 260, wrapLabels = false }: {
+  title: string; values: [string, number][]; showAll?: boolean; note?: string; labelWidth?: number; minHeight?: number; wrapLabels?: boolean;
+}) {
   const plotted = learnerChartGroups(values, showAll);
-  return <section className="glass-card learner-card"><h3>{title}</h3>{values.length ? <ReactECharts style={{ height: Math.max(260, plotted.length * 36) }} option={{
+  return <section className="glass-card learner-card"><h3>{title}</h3>{note && <p className="learner-note">{note}</p>}{values.length ? <ReactECharts style={{ height: Math.max(minHeight, plotted.length * (wrapLabels ? 40 : 36)) }} option={{
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: 10, right: 35, top: 20, bottom: 20, containLabel: true },
-    xAxis: { type: 'value', minInterval: 1 }, yAxis: { type: 'category', data: plotted.map(([label]) => label).reverse(), axisLabel: { width: 140, overflow: 'truncate' } },
+    xAxis: { type: 'value', minInterval: 1 }, yAxis: { type: 'category', data: plotted.map(([label]) => label).reverse(), axisLabel: { width: labelWidth, overflow: wrapLabels ? 'break' : 'truncate', lineHeight: 16 } },
     series: [{ type: 'bar', data: plotted.map(([, value]) => value).reverse(), itemStyle: { color: '#0284c7', borderRadius: [0, 4, 4, 0] }, label: { show: true, position: 'right' } }],
   }} /> : <p className="learner-note">Không có dữ liệu phù hợp bộ lọc.</p>}</section>;
 }
@@ -71,20 +73,9 @@ export default function LearnerDashboard({ view, onLogin }: { view: LearnerView;
   const accepted = countLearnerFlags(filtered, 'accepted') === null ? null : filtered.filter((p) => p.status === 'Đã nghiệm thu').length;
   const overdue = filtered.length && filtered.every((p) => p.status === 'Chưa đủ dữ liệu tiến độ') ? null : filtered.filter((p) => p.status === 'Quá hạn dự kiến').length;
   const totals = data ? getLearnerTotals(data, filters.year) : null;
-  const supervisors = useMemo(() => {
-    const entries = new Map<string, { name: string; unit: string; count: number }>();
-    filtered.forEach((p) => {
-      const seen = new Set<string>();
-      p.supervisors.forEach((s) => {
-        const key = s.staffId || searchText(`${s.name}|${s.unit}`);
-        if (seen.has(key)) return;
-        seen.add(key);
-        const previous = entries.get(key);
-        entries.set(key, { name: s.name, unit: s.unit, count: (previous?.count ?? 0) + 1 });
-      });
-    });
-    return [...entries.entries()].map(([key, value]) => ({ key, ...value })).sort((a, b) => b.count - a.count);
-  }, [filtered]);
+  const supervisors = useMemo(() => getLearnerSupervisors(filtered), [filtered]);
+  const groupSizes = useMemo(() => getLearnerGroupSizes(filtered), [filtered]);
+  const topSupervisors: [string, number][] = supervisors.slice(0, 10).map((supervisor) => [supervisor.name, supervisor.count]);
 
   const exportCsv = () => {
     const rows = filtered.map((p) => ({ 'Năm nhóm nguồn': p.year, 'Trạng thái phân tích': p.status, ...p.raw }));
@@ -136,7 +127,10 @@ export default function LearnerDashboard({ view, onLogin }: { view: LearnerView;
         </section>}
         {view === 'people' && <>
           <div className="learner-metrics"><Metric label="Lượt chủ nhiệm" value={filtered.filter((p) => p.leader).length} /><Metric label="Lượt thành viên" value={filtered.reduce((n, p) => n + p.members.length, 0)} /><Metric label="Cán bộ hướng dẫn" value={supervisors.length} /><Metric label="Chủ nhiệm có MSSV/MSHV" value={filtered.filter((p) => p.studentId).length} /></div>
-          <div className="learner-grid"><Bars title="Đề tài theo lớp" values={group(filtered.map((p) => p.className))} /><Bars title="Đề tài theo khóa" values={group(filtered.map((p) => p.cohort))} /></div>
+          <div className="learner-grid">
+            <Bars title="Quy mô nhóm người học" values={groupSizes} showAll minHeight={400} labelWidth={170} note="Số đề tài theo quy mô nhóm đã khai báo, gồm chủ nhiệm và thành viên người học." />
+            <Bars title="10 cán bộ hướng dẫn nhiều đề tài nhất" values={topSupervisors} showAll minHeight={400} labelWidth={190} wrapLabels note="Phân bố số đề tài theo cán bộ hướng dẫn trong phạm vi bộ lọc. Mỗi cán bộ được tính một lần trong một đề tài." />
+          </div>
           <section className="glass-card learner-card"><h3>Phân công hướng dẫn</h3><div className="learner-table-wrap"><table className="learner-table"><thead><tr><th>Cán bộ hướng dẫn</th><th>Đơn vị</th><th>Số đề tài</th></tr></thead><tbody>{supervisors.map((s) => <tr key={s.key}><td>{s.name}</td><td>{s.unit || 'Chưa cập nhật'}</td><td>{s.count}</td></tr>)}</tbody></table></div></section>
         </>}
         {view === 'progress' && <>

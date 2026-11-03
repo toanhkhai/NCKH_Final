@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import type { DashboardView } from '../../store/useDashboardStore';
 import type { LearnerView } from '../../learners/data';
+import { canAccessProjectView, type ProjectRole } from '../../services/projectAccess';
 
 export type PublicationView = 'all' | 'source1' | 'source2' | 'lookup';
 
@@ -13,6 +14,7 @@ type SidebarProps = {
   projectView: DashboardView;
   publicationView: PublicationView;
   learnerView: LearnerView;
+  projectRole: ProjectRole;
   isOpen: boolean;
   onClose: () => void;
   onProjectSelect: (view: DashboardView) => void;
@@ -21,7 +23,7 @@ type SidebarProps = {
 };
 
 const projectItems = [
-  { id: 'overview', label: 'Tổng quan điều hành', icon: LayoutDashboard },
+  { id: 'overview', label: 'Tổng quan', icon: LayoutDashboard },
   { id: 'units', label: 'Theo 9 đơn vị', icon: Building2 },
   { id: 'progress', label: 'Tiến độ & nghiệm thu', icon: Clock },
   { id: 'people', label: 'Nhân sự nghiên cứu', icon: Users },
@@ -38,7 +40,7 @@ const publicationItems = [
 ] as const;
 
 const learnerItems = [
-  { id: 'overview', label: 'Tổng quan người học', icon: LayoutDashboard },
+  { id: 'overview', label: 'Tổng quan', icon: LayoutDashboard },
   { id: 'projects', label: 'Danh mục đề tài', icon: TableProperties },
   { id: 'people', label: 'Người học & hướng dẫn', icon: Users },
   { id: 'progress', label: 'Tiến độ & nghiệm thu', icon: Clock },
@@ -47,7 +49,7 @@ const learnerItems = [
 ] as const;
 
 export function Sidebar({
-  area, projectView, publicationView, learnerView, isOpen, onClose, onProjectSelect, onPublicationSelect, onLearnerSelect,
+  area, projectView, publicationView, learnerView, projectRole, isOpen, onClose, onProjectSelect, onPublicationSelect, onLearnerSelect,
 }: SidebarProps) {
   const [expanded, setExpanded] = useState<Record<'projects' | 'publications', boolean>>({
     projects: area !== 'publications',
@@ -102,7 +104,7 @@ export function Sidebar({
                   <button type="button" className={`combined-nav-subgroup ${area === 'projects' ? 'current' : ''}`} aria-expanded={subgroups.staff} aria-controls="staff-nav" onClick={() => setSubgroups((s) => ({ ...s, staff: !s.staff }))}>
                     <Users size={17} /><span>Đề tài Cán bộ</span><ChevronDown size={14} className={subgroups.staff ? 'expanded' : ''} />
                   </button>
-                  {subgroups.staff && <div id="staff-nav" className="combined-nav-children combined-nav-level3">{projectItems.map(({ id, label, icon: Icon }) => (
+                  {subgroups.staff && <div id="staff-nav" className="combined-nav-children combined-nav-level3">{projectItems.filter(({ id }) => canAccessProjectView(projectRole, 'projects', id)).map(({ id, label, icon: Icon }) => (
                     <button
                       key={id}
                       type="button"
@@ -116,7 +118,7 @@ export function Sidebar({
                   <button type="button" className={`combined-nav-subgroup ${area === 'learners' ? 'current' : ''}`} aria-expanded={subgroups.learners} aria-controls="learners-nav" onClick={() => setSubgroups((s) => ({ ...s, learners: !s.learners }))}>
                     <GraduationCap size={17} /><span>Đề tài người học</span><ChevronDown size={14} className={subgroups.learners ? 'expanded' : ''} />
                   </button>
-                  {subgroups.learners && <div id="learners-nav" className="combined-nav-children combined-nav-level3">{learnerItems.map(({ id, label, icon: Icon }) => <button
+                  {subgroups.learners && <div id="learners-nav" className="combined-nav-children combined-nav-level3">{learnerItems.filter(({ id }) => canAccessProjectView(projectRole, 'learners', id)).map(({ id, label, icon: Icon }) => <button
                     key={id} type="button" className={`nav-item-btn ${area === 'learners' && learnerView === id ? 'active' : ''}`}
                     aria-current={area === 'learners' && learnerView === id ? 'page' : undefined} onClick={() => onLearnerSelect(id)}
                   ><span className="nav-icon"><Icon size={16} /></span><span className="nav-label">{label}</span></button>)}</div>}

@@ -42,6 +42,37 @@ export function learnerChartGroups(values: [string, number][], showAll = false):
 
 const norm = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/\s+/g, ' ').trim();
 export const searchText = norm;
+
+export function getLearnerSupervisors(projects: Pick<LearnerProject, 'supervisors'>[]) {
+  const entries = new Map<string, { name: string; unit: string; count: number }>();
+  projects.forEach((project) => {
+    const seen = new Set<string>();
+    project.supervisors.forEach((supervisor) => {
+      const key = supervisor.staffId || `${searchText(supervisor.name)}|${searchText(supervisor.unit)}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const previous = entries.get(key);
+      entries.set(key, { name: supervisor.name, unit: supervisor.unit, count: (previous?.count ?? 0) + 1 });
+    });
+  });
+  return [...entries.entries()].map(([key, value]) => ({ key, ...value }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'vi') || a.key.localeCompare(b.key));
+}
+
+export function getLearnerGroupSizes(projects: Pick<LearnerProject, 'leader' | 'members'>[]): [string, number][] {
+  if (!projects.length) return [];
+  const counts = [0, 0, 0, 0, 0];
+  let unknown = 0;
+  projects.forEach((project) => {
+    if (!project.leader) { unknown++; return; }
+    const size = 1 + project.members.length;
+    counts[Math.min(size, 5) - 1]++;
+  });
+  const groups: [string, number][] = counts.map((count, index) => [index === 4 ? 'Từ 5 người trở lên' : `${index + 1} người`, count]);
+  if (unknown) groups.push(['Chưa cập nhật chủ nhiệm', unknown]);
+  return groups;
+}
+
 export function numberOrNull(value: string): number | null {
   const clean = value.trim().replace(/\s/g, '').replace(/\.(?=\d{3}(?:\D|$))/g, '').replace(',', '.');
   if (!clean) return null;

@@ -26,9 +26,10 @@ import { isAcceptedProject, projectFlag } from '../../services/projectAnalytics'
 interface ProjectDrawerProps {
   project: Project | null;
   onClose: () => void;
+  hideCatalogFields?: boolean;
 }
 
-export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }) => {
+export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, hideCatalogFields = false }) => {
   if (!project) return null;
 
   const formatDate = (d?: Date) => {
@@ -47,12 +48,12 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }
           <div className="drawer-header-left">
             <span className="drawer-level-tag">{LEVEL_LABELS[project.level]}</span>
             <span className="drawer-stt">STT #{project.stt}</span>
-            <span
+            {!hideCatalogFields && <span
               className="badge drawer-status-badge"
               style={{ backgroundColor: `${statusColor}22`, color: statusColor, borderColor: statusColor }}
             >
               {STATUS_LABELS[project.status]}
-            </span>
+            </span>}
           </div>
 
           <button className="drawer-close-btn" onClick={onClose} aria-label="Đóng">
@@ -174,16 +175,16 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }
           <section className="drawer-section">
             <h3 className="drawer-section-title">
               <Coins size={16} />
-              <span>Kinh phí & Hợp tác</span>
+              <span>{hideCatalogFields ? 'Hợp tác' : 'Kinh phí & Hợp tác'}</span>
             </h3>
             <div className="drawer-grid-2">
-              <div className="drawer-field">
+              {!hideCatalogFields && <div className="drawer-field">
                 <span className="field-label">Kinh phí đề tài:</span>
                 <span className="field-value budget-highlight">
                   {project.budgetKnown ? <>{new Intl.NumberFormat('vi-VN').format(project.budget)} triệu đồng
                   <span className="budget-sub">({(project.budget * 1000000).toLocaleString('vi-VN')} VNĐ)</span></> : 'Chưa cập nhật'}
                 </span>
-              </div>
+              </div>}
               <div className="drawer-field">
                 <span className="field-label">Thanh lý hợp đồng:</span>
                 <span className="field-value">
@@ -216,7 +217,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }
               <span>Kết quả Nghiệm thu</span>
             </h3>
             <div className="drawer-grid-2">
-              <div className="drawer-field">
+              {!hideCatalogFields && <><div className="drawer-field">
                 <span className="field-label">Trạng thái nghiệm thu:</span>
                 <span className="field-value">
                   {project.isStopped ? 'Đã ngưng / hủy' : projectFlag(project, 'accepted') === null ? 'Chưa cập nhật trạng thái' : isAcceptedProject(project) ? (
@@ -237,7 +238,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }
                 >
                   {GRADE_LABELS[project.grade]}
                 </span>
-              </div>
+              </div></>}
               <div className="drawer-field">
                 <span className="field-label">Quyết định nghiệm thu:</span>
                 <span className="field-value">{project.acceptDecision || '—'}</span>

@@ -5,7 +5,7 @@ import { GRADE_LABELS, type EvaluationGrade, type ProjectLevel, type ProjectStat
 import { STANDARD_UNITS } from '../../config/units';
 import { filterProjects } from '../../services/projectTable';
 
-export const FilterBar: React.FC = () => {
+export const FilterBar: React.FC<{ hideCatalogFields?: boolean }> = ({ hideCatalogFields = false }) => {
   const { filters, updateFilters, resetFilters, filteredProjects, data, availableYears } = useDashboard();
 
   const isFiltered =
@@ -131,7 +131,7 @@ export const FilterBar: React.FC = () => {
           </div>
 
           {/* Status select */}
-          <div className="filter-group">
+          {!hideCatalogFields && <><div className="filter-group">
             <label className="filter-label" htmlFor="staff-filter-status">Trạng thái:</label>
             <select
               id="staff-filter-status"
@@ -154,7 +154,7 @@ export const FilterBar: React.FC = () => {
               <option value="ALL">Tất cả xếp loại</option>
               {Object.entries(GRADE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
-          </div>
+          </div></>}
         </div>
 
         {/* Filter Stats & Reset */}
