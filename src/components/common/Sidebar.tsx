@@ -68,13 +68,23 @@ export function Sidebar({
     <>
       {isOpen && <div className="sidebar-backdrop" onClick={onClose} />}
       <aside className={`sidebar-container ${isOpen ? 'open' : ''}`} aria-label="Điều hướng dashboard">
-        <div className="sidebar-header">
+        <a
+          href="/"
+          className="sidebar-header sidebar-home-link"
+          aria-label="Về trang chủ"
+          onClick={(event) => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            onProjectSelect('overview');
+            window.scrollTo(0, 0);
+          }}
+        >
           <div className="logo-box"><img src="/logo.png" alt="Logo CTUMP" className="school-logo-img" /></div>
           <div className="logo-text">
             <div className="school-abbr">CTUMP KHCN</div>
             <div className="phase-text">Dashboard hợp nhất</div>
           </div>
-        </div>
+        </a>
         <div className="sidebar-nav-section">
           <nav className="nav-list" aria-label="Hai nhóm chức năng">
             <div className="combined-nav-group">
