@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import { AlertCircle, Download, LogOut, User, ShieldCheck, LogIn } from 'lucide-react';
+import { Download, LogOut, User, ShieldCheck, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { LoginModal } from './LoginModal.jsx';
 
 export const Header = ({
-  activeTab = 'source1',
-  onTabChange,
-  recordCount = 0,
-  source1Count = 0,
-  source2Count = 0,
-  lastUpdated = null,
-  loading = false,
-  error = null,
   onLogin,
   onOpenPermissionManager,
   onExportCSV,
@@ -32,12 +24,6 @@ export const Header = ({
                   <h1 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight uppercase">
                     Dashboard Nghiên Cứu Khoa Học - Trường Đại Học Y Dược Cần Thơ
                   </h1>
-                  {error && (
-                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 bg-red-100 text-red-600 border border-red-200 rounded flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Lỗi kết nối Sheet
-                    </span>
-                  )}
                 </div>
                 <p className="text-[11px] text-slate-500">
                   Hệ thống quản lý và trực quan hóa dữ liệu công bố khoa học

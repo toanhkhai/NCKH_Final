@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Download, ExternalLink, Eye } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Download, Eye } from 'lucide-react';
 import { useDashboard } from '../../store/useDashboardStore';
 import { GRADE_LABELS, STATUS_LABELS } from '../../types/project';
-import { exportProjectsCsv, projectAssignmentYear, projectPage, projectSourceUrl, sortProjects, type ProjectSortField, type ProjectSortOrder } from '../../services/projectTable';
+import { exportProjectsCsv, projectAssignmentYear, projectPage, sortProjects, type ProjectSortField, type ProjectSortOrder } from '../../services/projectTable';
 import '../../styles/project-catalog.css';
 
 const formatNumber = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 });
 
 export function ProjectsTableView() {
-  const { filteredProjects, data, setSelectedProject, resetFilters, isLoading } = useDashboard();
+  const { filteredProjects, setSelectedProject, resetFilters, isLoading } = useDashboard();
   const [requestedPage, setRequestedPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [sortField, setSortField] = useState<ProjectSortField>('assignmentYear');
@@ -39,7 +39,6 @@ export function ProjectsTableView() {
     URL.revokeObjectURL(url);
   };
   const firstPageButton = Math.max(1, Math.min(page.currentPage - 2, page.totalPages - 4));
-  const budgetDifference = data?.reconciliation.tab1TotalBudget != null && data.reconciliation.detailsComplete ? data.reconciliation.detailedTotalBudget - data.reconciliation.tab1TotalBudget : 0;
 
   return <section className="project-catalog" aria-label="Danh mục đề tài cán bộ" aria-busy={isLoading}>
     <div className="catalog-toolbar">
@@ -51,7 +50,6 @@ export function ProjectsTableView() {
         <button type="button" className="catalog-export" onClick={exportCsv} disabled={!sorted.length}><Download size={15} /> Xuất CSV</button>
       </div>
     </div>
-    {Math.abs(budgetDifference) > 0.0001 && <p className="catalog-data-note">Kinh phí trên toàn bộ tab chi tiết đang {budgetDifference > 0 ? 'cao' : 'thấp'} hơn tab tổng hợp {formatNumber.format(Math.abs(budgetDifference))} triệu đồng. Bảng hiển thị kinh phí từ từng dòng chi tiết để bạn đối chiếu.</p>}
 
     <div className="catalog-table-scroll" tabIndex={0} role="region" aria-label="Bảng đề tài, cuộn ngang để xem đủ cột">
       <table className="catalog-table">
@@ -62,7 +60,7 @@ export function ProjectsTableView() {
           {sortHeader('Chủ nhiệm', 'pi')}
           {sortHeader('Đơn vị', 'assigningUnit')}
           {sortHeader('Năm giao', 'assignmentYear', true)}
-          {sortHeader('Kinh phí', 'budget', true)}
+          {sortHeader('Kinh phí (tr.đ)', 'budget', true)}
           <th scope="col">Trạng thái</th><th scope="col">Xếp loại</th><th scope="col" className="catalog-actions">Mở</th>
         </tr></thead>
         <tbody>{page.rows.map((project, index) => <tr key={project.id}>
@@ -79,14 +77,12 @@ export function ProjectsTableView() {
           <td className={project.grade === 'CHUA_XEP_LOAI' ? 'catalog-muted' : ''}>{GRADE_LABELS[project.grade]}</td>
           <td><div className="catalog-row-actions">
             <button type="button" onClick={() => setSelectedProject(project)} title="Xem chi tiết" aria-label={`Xem chi tiết: ${project.title}`}><Eye size={16} /></button>
-            <a href={projectSourceUrl(project)} target="_blank" rel="noreferrer" title={`Mở Google Sheet, dòng ${project.sourceRow} (STT nguồn ${project.stt})`} aria-label={`Mở dòng ${project.sourceRow} trên Google Sheet`}><ExternalLink size={15} /></a>
           </div></td>
         </tr>)}</tbody>
       </table>
-      {!sorted.length && <div className="catalog-empty"><p>{isLoading ? 'Đang tải dữ liệu từ Google Sheet…' : 'Không có đề tài phù hợp với bộ lọc.'}</p><button type="button" onClick={resetFilters}>Đặt lại bộ lọc</button></div>}
+      {!sorted.length && <div className="catalog-empty"><p>{isLoading ? 'Đang tải dữ liệu…' : 'Không có đề tài phù hợp với bộ lọc.'}</p><button type="button" onClick={resetFilters}>Đặt lại bộ lọc</button></div>}
     </div>
     <div className="catalog-footer">
-      <p>Kinh phí: triệu đồng · STT theo danh sách đang xem. Biểu tượng ↗ mở dòng nguồn trên Sheet.{filteredProjects.some((p) => !p.budgetKnown) && ` Có ${filteredProjects.filter((p) => !p.budgetKnown).length} hồ sơ chưa cập nhật kinh phí.`}</p>
       <nav className="catalog-pagination" aria-label="Phân trang đề tài">
         <button type="button" disabled={page.currentPage <= 1} onClick={() => setRequestedPage(page.currentPage - 1)} aria-label="Trang trước"><ChevronLeft size={16} /></button>
         {Array.from({ length: Math.min(5, page.totalPages) }, (_, i) => firstPageButton + i).map((number) => <button type="button" key={number} aria-current={number === page.currentPage ? 'page' : undefined} onClick={() => setRequestedPage(number)}>{number}</button>)}

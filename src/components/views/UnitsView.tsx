@@ -6,7 +6,7 @@ import { STANDARD_UNITS } from '../../config/units';
 import { STATUS_COLORS, STATUS_LABELS, type ProjectStatus, type StandardUnit } from '../../types/project';
 import { buildUnitYearHeatmap, heatmapTone, HEATMAP_LOW, HEATMAP_HIGH } from '../../services/unitHeatmap';
 import '../../styles/units.css';
-import { budgetSummary, flagCount, isAcceptedProject, projectFlag } from '../../services/projectAnalytics';
+import { budgetSummary, flagCount, isAcceptedProject } from '../../services/projectAnalytics';
 
 export const UnitsView: React.FC<{ onOpenProjects?: () => void }> = ({ onOpenProjects }) => {
   const { filteredProjects, filters, availableYears, theme, updateFilters, setActiveView } = useDashboard();
@@ -211,8 +211,6 @@ export const UnitsView: React.FC<{ onOpenProjects?: () => void }> = ({ onOpenPro
           </div>
         ))}
       </div>
-
-      <p className="chart-note">Nghiệm thu là số hồ sơ đã được xác nhận, tỷ lệ tính trên tổng hồ sơ được giao. Có {projects.filter((project) => projectFlag(project, 'accepted') === null).length} hồ sơ chưa cập nhật cờ nghiệm thu; dấu — là chưa có dữ liệu xác nhận.</p>
 
       {/* Row Charts: Heatmap & Stacked Bar */}
       <div className="charts-grid-2">

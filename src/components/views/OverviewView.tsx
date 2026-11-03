@@ -10,28 +10,27 @@ import {
   TrendingUp,
   Award,
   PieChart,
-  ShieldCheck,
   Building,
 } from 'lucide-react';
 import { useDashboard } from '../../store/useDashboardStore';
 import { KpiCard } from '../common/KpiCard';
 import { EmptyState } from '../common/EmptyState';
-import { GRADE_COLORS, STATUS_COLORS, STATUS_LABELS, LEVEL_LABELS, StandardUnit } from '../../types/project';
-import { yearSeries, budgetSummary, flagCount, isAcceptedProject, projectFlag } from '../../services/projectAnalytics';
+import { GRADE_COLORS, STATUS_COLORS, STATUS_LABELS, LEVEL_LABELS } from '../../types/project';
+import { yearSeries, budgetSummary, flagCount, isAcceptedProject } from '../../services/projectAnalytics';
 import { UNIT_COLORS, STANDARD_UNITS } from '../../config/units';
 
 export const OverviewView: React.FC = () => {
-  const { data, filters, filteredProjects, theme, setSelectedProject, updateFilters, isLoading } = useDashboard();
+  const { data, filters, filteredProjects, theme, isLoading } = useDashboard();
 
   if (isLoading) {
-    return <EmptyState title="Đang nạp dữ liệu từ Google Sheets..." />;
+    return <EmptyState title="Đang tải dữ liệu…" description="" />;
   }
 
   if (!data?.projects.length) {
     return (
       <EmptyState
         title="Chưa có dữ liệu đề tài"
-        description="Không tìm thấy đề tài nào trong dữ liệu tải về từ Google Sheets hoặc bảng tính chưa có số liệu."
+        description="Chưa có đề tài để hiển thị."
       />
     );
   }
@@ -346,42 +345,31 @@ export const OverviewView: React.FC = () => {
 
   return (
     <div className="overview-view-container animate-fade-in">
-      {/* Reconciliation Success Banner */}
-      {data.reconciliation.isBalanced && (
-        <div className="reconciliation-banner glass-card">
-          <ShieldCheck size={18} className="shield-icon" />
-          <span>
-            <strong>Đã đối chiếu hoàn tất:</strong> Số hồ sơ, nghiệm thu và kinh phí chi tiết khớp tổng kỳ {data.reconciliation.period} trên tab tổng hợp.
-          </span>
-        </div>
-      )}
-
-      <p className="chart-note">Các chỉ số và biểu đồ dưới đây tính từ hồ sơ chi tiết theo bộ lọc. Tổng chính thức và phần chênh lệch được đối chiếu ở mục Chất lượng dữ liệu.</p>
       {/* KPI Cards Grid */}
       <div className="kpi-grid">
         <KpiCard
-          title="Hồ sơ đề tài theo bộ lọc"
+          title="Tổng số đề tài"
           value={totalAssigned.toLocaleString('vi-VN')}
-          subtitle={filters.year === 'ALL' ? 'Tất cả năm giao có hồ sơ' : `Năm giao ${filters.year}`}
+          subtitle={filters.year === 'ALL' ? 'Tất cả các năm' : `Năm giao ${filters.year}`}
           icon={<FolderGit2 size={22} />}
           colorScheme="sky"
-          trendText={filters.level === 'ALL' ? `${new Set(projects.map((project) => project.level)).size} cấp có hồ sơ` : LEVEL_LABELS[filters.level]}
+          trendText={filters.level === 'ALL' ? `${new Set(projects.map((project) => project.level)).size} cấp đề tài` : LEVEL_LABELS[filters.level]}
         />
 
         <KpiCard
           title="Đề tài đã nghiệm thu"
           value={acceptedKnown === null ? 'Chưa cập nhật' : acceptedCount.toLocaleString('vi-VN')}
-          subtitle={`${acceptedRate}% đã ghi nhận; ${projects.filter((project) => projectFlag(project, 'accepted') === null).length} hồ sơ chưa cập nhật cờ`}
+          subtitle={acceptedKnown === null ? 'Chưa có số liệu nghiệm thu' : `Chiếm ${acceptedRate}% tổng số đề tài`}
           icon={<CheckCircle size={22} />}
           colorScheme="emerald"
-          trendText={acceptedKnown === null ? 'Chưa có cờ xác nhận' : `${acceptedRate}%`}
+          trendText={acceptedKnown === null ? 'Chưa cập nhật' : `${acceptedRate}%`}
           progressPercent={acceptedKnown === null ? undefined : parseFloat(acceptedRate)}
         />
 
         <KpiCard
           title="Tổng kinh phí đã cấp"
           value={totalBudgetMillion === null ? 'Chưa cập nhật' : `${totalBudgetMillion.toLocaleString('vi-VN')} Tr`}
-          subtitle={totalBudgetMillion === null ? 'Chưa có số liệu kinh phí' : `${(totalBudgetMillion / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 3 })} tỷ đồng; ${budget.missing} hồ sơ thiếu kinh phí`}
+          subtitle={totalBudgetMillion === null ? 'Chưa cập nhật' : `${(totalBudgetMillion / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 3 })} tỷ đồng`}
           icon={<Coins size={22} />}
           colorScheme="amber"
           trendText="Triệu VNĐ"
@@ -390,10 +378,10 @@ export const OverviewView: React.FC = () => {
         <KpiCard
           title="Đề tài đã gia hạn"
           value={flagCount(projects, 'extended') === null ? 'Chưa cập nhật' : extendedCount.toLocaleString('vi-VN')}
-          subtitle={`Chiếm ${extendedRate}% tổng số đề tài`}
+          subtitle={flagCount(projects, 'extended') === null ? 'Chưa có số liệu gia hạn' : `Chiếm ${extendedRate}% tổng số đề tài`}
           icon={<History size={22} />}
           colorScheme="purple"
-          trendText={`${extendedCount} đã ghi nhận`}
+          trendText={flagCount(projects, 'extended') === null ? 'Chưa cập nhật' : `${extendedCount} đã ghi nhận`}
           progressPercent={flagCount(projects, 'extended') === null ? undefined : parseFloat(extendedRate)}
         />
 
@@ -403,7 +391,7 @@ export const OverviewView: React.FC = () => {
           subtitle="Theo các Quyết định thu hồi"
           icon={<XCircle size={22} />}
           colorScheme="rose"
-          trendText={`${stoppedCount} đã ghi nhận`}
+          trendText={flagCount(projects, 'stopped') === null ? 'Chưa cập nhật' : `${stoppedCount} đã ghi nhận`}
           progressPercent={flagCount(projects, 'stopped') === null ? undefined : totalAssigned ? stoppedCount / totalAssigned * 100 : 0}
         />
       </div>
@@ -462,18 +450,17 @@ export const OverviewView: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab 1 Native Summary Matrix */}
+      {/* Summary by reporting period */}
       {data.summaryTable.length > 0 && (
         <div className="summary-matrix-card glass-card">
           <div className="chart-card-header">
             <div className="chart-title-box">
               <FolderGit2 size={18} className="title-icon sky" />
-              <h3 className="chart-title">Bảng Thống kê Tự động Gốc từ Tab 1 (Đối chiếu Chéo)</h3>
+              <h3 className="chart-title">Thống kê theo kỳ</h3>
             </div>
           </div>
 
-          <p className="chart-note">Bảng nguồn toàn kỳ, không áp dụng các bộ lọc hồ sơ phía trên.</p>
-          <div className="table-responsive-wrapper" tabIndex={0} role="region" aria-label="Bảng tổng hợp theo năm">
+          <div className="table-responsive-wrapper" tabIndex={0} role="region" aria-label="Bảng tổng hợp theo năm" title="Thống kê toàn kỳ, độc lập với bộ lọc đề tài">
             <table className="modern-table">
               <thead>
                 <tr>

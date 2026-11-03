@@ -3,13 +3,13 @@ import {
   ShieldCheck,
   AlertTriangle,
   AlertCircle,
-  ExternalLink,
+  Eye,
   CheckCircle2,
   FileQuestion,
   HelpCircle,
 } from 'lucide-react';
 import { useDashboard } from '../../store/useDashboardStore';
-import { projectPage, projectSourceUrl } from '../../services/projectTable';
+import { projectPage } from '../../services/projectTable';
 
 export const DataQualityView: React.FC = () => {
   const { data, filteredProjects, setSelectedProject } = useDashboard();
@@ -42,7 +42,6 @@ export const DataQualityView: React.FC = () => {
     100
   ).toFixed(1);
 
-  // Link to specific sheet row on Google Sheets
   const fmt = (value: number | null) => value === null ? 'Chưa có đủ dữ liệu' : value.toLocaleString('vi-VN');
   const comparison = (left: number | null, right: number, covered = true) => left === null || !reconciliation.detailsComplete || !covered ? <span className="text-warning">Chưa đủ dữ liệu đối chiếu</span> : Math.abs(left - right) < 0.0001
     ? <span className="text-success">Khớp</span> : <span className="text-warning">Lệch {new Intl.NumberFormat('vi-VN').format(Math.abs(left - right))}</span>;
@@ -50,10 +49,7 @@ export const DataQualityView: React.FC = () => {
   return (
     <div className="data-quality-view-container animate-fade-in">
       <div className="view-intro-box">
-        <h2 className="view-title">Kiểm Tra Chất Lượng Dữ Liệu & Đối Chiếu Bảng Tính</h2>
-        <p className="view-subtitle">
-          Tự động phát hiện các bất thường, mâu thuẫn trạng thái hoặc thiếu sót thông tin trong Google Sheets để bộ phận phụ trách kịp thời cập nhật.
-        </p>
+        <h2 className="view-title">Chất lượng dữ liệu</h2>
       </div>
 
       {/* Health Score & Reconciliation Row */}
@@ -70,7 +66,7 @@ export const DataQualityView: React.FC = () => {
           <div className="score-right">
             <h3 className="score-heading">Chỉ Số Sức Khỏe Dữ Liệu</h3>
             <p className="score-desc">
-              Có <strong>{projects.length - projectsWithIssues.length}</strong> / {projects.length} hồ sơ theo bộ lọc không có cảnh báo ở các trường đang kiểm tra: mã cán bộ, kinh phí, thời gian và trạng thái.
+              <strong>{projects.length - projectsWithIssues.length}</strong> / {projects.length} hồ sơ không có cảnh báo.
             </p>
             <div className="score-badges-row">
               <span className={`badge ${reconciliation.isBalanced ? 'badge-success' : 'badge-warning'}`}>
@@ -89,18 +85,16 @@ export const DataQualityView: React.FC = () => {
         <div className="dq-reconciliation-card glass-card">
           <div className="recon-header">
             <ShieldCheck size={20} className="shield-icon" />
-            <h3 className="recon-title">Kết Quả Đối Chiếu Chéo Với Bảng Tổng Hợp Tab 1</h3>
+            <h3 className="recon-title">Đối chiếu số liệu · {reconciliation.period || 'Toàn kỳ'}</h3>
           </div>
-          <p className="chart-note">Đối chiếu toàn bộ các cấp trong kỳ {reconciliation.period || 'chưa xác định'}, không áp dụng bộ lọc hồ sơ. Danh sách cần bổ sung phía dưới áp dụng bộ lọc.</p>
-          <p className="chart-note">Kinh phí đã có số liệu ở {data.projects.filter((project) => project.budgetKnown).length}/{data.projects.length} hồ sơ.{reconciliation.detailsComplete && reconciliation.tab1TotalBudget !== null && Math.abs(reconciliation.detailedTotalBudget - reconciliation.tab1TotalBudget) > .0001 ? ` Phần đã ghi nhận chênh ${fmt(Math.abs(reconciliation.detailedTotalBudget - reconciliation.tab1TotalBudget))} triệu đồng so với tổng hợp; cần kiểm tra nguồn và bổ sung ô còn thiếu.` : ''}</p>
 
           <div className="recon-table-wrapper">
-            <table className="recon-table">
+            <table className="recon-table" title="Đối chiếu toàn kỳ, độc lập với bộ lọc đề tài">
               <thead>
                 <tr>
-                  <th>Chỉ số kiểm chứng</th>
-                  <th className="num-col">Bảng Tổng Hợp (Tab 1)</th>
-                  <th className="num-col">Các tab chi tiết</th>
+                  <th>Chỉ số</th>
+                  <th className="num-col">Tổng hợp</th>
+                  <th className="num-col">Hồ sơ chi tiết</th>
                   <th className="status-col">Đối chiếu</th>
                 </tr>
               </thead>
@@ -150,7 +144,7 @@ export const DataQualityView: React.FC = () => {
                   <th>Chủ nhiệm & Đơn vị</th>
                   <th>Vấn đề phát hiện</th>
                   <th>Mức độ</th>
-                  <th>Chỉnh sửa trên Sheet</th>
+                  <th>Chi tiết</th>
                 </tr>
               </thead>
               <tbody>
@@ -187,16 +181,15 @@ export const DataQualityView: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <a
-                        href={projectSourceUrl(p)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-sheet-jump"
-                        title="Mở đúng dòng này trên Google Sheets để chỉnh sửa"
+                      <button
+                        type="button"
+                        onClick={() => setSelectedProject(p)}
+                        className="btn-secondary"
+                        aria-label={`Xem chi tiết: ${p.title}`}
                       >
-                        <span>Mở dòng {p.sourceRow}</span>
-                        <ExternalLink size={13} />
-                      </a>
+                        <Eye size={13} />
+                        <span>Xem chi tiết</span>
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -1467,19 +1467,6 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.reconciliation-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1.25rem;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: var(--radius-md);
-  margin-bottom: 1.5rem;
-  font-size: 0.85rem;
-  color: #15803d;
-}
-
 /* --------------------------------------------------------------------------
    Empty State Styles
    -------------------------------------------------------------------------- */

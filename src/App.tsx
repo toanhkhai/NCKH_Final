@@ -29,23 +29,18 @@ function ProjectsDashboard({ view, onNavigate, onLogin }: { view: DashboardView;
   return (
     <main className="view-container">
       <Navbar onLogin={onLogin} title="ĐỀ TÀI CÁN BỘ — THỐNG KÊ KẾT QUẢ & HIỆU QUẢ KHCN" />
-      <div className="dashboard-data-status">
-        <span>{data ? `Bản dữ liệu đọc lúc ${data.lastUpdated.toLocaleString('vi-VN')} · ${Object.values(data.sheetStatus).filter((source) => source.loaded).length}/6 nguồn đã đọc` : isLoading ? 'Đang đọc dữ liệu Google Sheets' : 'Chưa có bản dữ liệu Google Sheets'}</span>
-        <button type="button" className="btn-secondary" onClick={refreshData} disabled={isLoading}><RefreshCw size={14} className={isLoading ? 'spin-icon' : ''} />{isLoading ? 'Đang đọc Sheet…' : 'Làm mới dữ liệu'}</button>
-      </div>
       <FilterBar />
       {error && (
-        <div className="reconciliation-banner glass-card" style={{ borderColor: 'var(--color-danger)', color: 'var(--color-danger)' }}>
+        <div role="alert" className="data-load-alert">
           <AlertCircle size={18} />
-          <div style={{ flex: 1 }}><strong>Chưa đọc đủ dữ liệu Google Sheets:</strong> {error}. Các số liệu đang xem chỉ phản ánh những nguồn đã đọc được.</div>
-          <button className="btn-secondary" onClick={refreshData}><RefreshCw size={14} /><span>Thử lại</span></button>
+          <span>{data ? 'Một phần dữ liệu chưa tải được.' : 'Không thể tải dữ liệu.'}</span>
+          <button type="button" className="btn-secondary" onClick={refreshData} disabled={isLoading}>Thử lại</button>
         </div>
       )}
       {isLoading && !data && (
-        <div className="empty-state-box glass-card animate-fade-in">
+        <div className="empty-state-box glass-card animate-fade-in" role="status">
           <div className="empty-icon-wrapper"><RefreshCw size={36} className="spin-icon" /></div>
-          <h3 className="empty-title">Đang đồng bộ dữ liệu mới nhất từ 6 Sheet...</h3>
-          <p className="empty-desc">Hệ thống đang kết nối đến Google Sheets và đối chiếu số liệu với Bảng Tổng Hợp.</p>
+          <h3 className="empty-title">Đang tải dữ liệu…</h3>
         </div>
       )}
       {data && (

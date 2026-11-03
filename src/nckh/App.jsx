@@ -8,7 +8,7 @@ import { ChartsSection } from './components/ChartsSection.jsx';
 import { DataTable } from './components/DataTable.jsx';
 import { GlobalFilterBar } from './components/GlobalFilterBar.jsx';
 import { PermissionManager } from './components/PermissionManager.jsx';
-import { AlertCircle, FileSpreadsheet, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { DEFAULT_SHEET1_URL, DEFAULT_SHEET2_URL } from './data/rawSheetData.js';
 
 export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
@@ -205,19 +205,8 @@ export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
         ? sheet2.error
         : (sheet1.error && sheet2.error ? `${sheet1.error} | ${sheet2.error}` : null);
 
-  const currentWarning =
-    activeView === 'source1'
-      ? sheet1.warning
-      : activeView === 'source2'
-        ? sheet2.warning
-        : (sheet1.warning || sheet2.warning || (sheet1.error ? `Nguồn 1: ${sheet1.error}` : sheet2.error ? `Nguồn 2: ${sheet2.error}` : null));
-
-  const currentLastUpdated =
-    activeView === 'source1'
-      ? sheet1.lastUpdated
-      : activeView === 'source2'
-        ? sheet2.lastUpdated
-        : sheet1.lastUpdated || sheet2.lastUpdated;
+  const hasPartialError = activeView !== 'source1' && activeView !== 'source2'
+    && Boolean(sheet1.error) !== Boolean(sheet2.error);
 
   const handleExportCSV = () => {
     const tabName =
@@ -235,42 +224,16 @@ export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
     <div className="publications-dashboard min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-200">
       <Header
         onLogin={onLogin}
-        activeTab={activeView}
-        onTabChange={() => {}}
-        recordCount={activeRecords.length}
-        source1Count={sheet1.data.length}
-        source2Count={sheet2.data.length}
-        lastUpdated={currentLastUpdated}
-        loading={currentLoading}
-        error={currentError}
         onExportCSV={handleExportCSV}
         onOpenPermissionManager={() => setShowPermissionModal(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Error notification */}
-        {currentError && (
-          <div className="mb-6 p-4 rounded-sm bg-red-50 border border-red-200 flex items-start gap-3.5 text-red-800 text-xs sm:text-sm shadow-sm">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <div className="font-bold text-red-900">Không thể đọc dữ liệu từ Google Sheets:</div>
-              <p className="mt-1 leading-relaxed">{currentError}</p>
-              <div className="mt-3 flex items-center flex-wrap gap-2.5">
-                <button
-                  onClick={() => window.location.reload()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors"
-                >
-                  <span>Tải lại trang</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!currentError && currentWarning && (
-          <div className="mb-6 p-3 rounded-sm bg-blue-50 border border-blue-200 flex items-center gap-3 text-blue-800 text-xs">
-            <FileSpreadsheet className="w-4 h-4 text-blue-600 shrink-0" />
-            <p className="flex-1">{currentWarning}</p>
+        {(currentError || hasPartialError) && (
+          <div role="alert" className="data-load-alert">
+            <span>{currentError ? 'Không thể tải dữ liệu.' : 'Một phần dữ liệu chưa tải được.'}</span>
+            <button type="button" onClick={() => window.location.reload()} className="btn-secondary" disabled={currentLoading}>Thử lại</button>
           </div>
         )}
 
@@ -295,7 +258,7 @@ export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
 
         {!currentLoading && !currentError && activeRecords.length === 0 && (
           <div className="text-center py-20 text-slate-500 text-xs">
-            Bảng tính không có dữ liệu để hiển thị.
+            Chưa có công bố để hiển thị.
           </div>
         )}
 

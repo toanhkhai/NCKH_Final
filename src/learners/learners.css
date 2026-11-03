@@ -2,9 +2,7 @@
 .learner-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
 .learner-heading h2 { font-size: 1.35rem; font-weight: 700; }
 .learner-heading p { font-size: .75rem; color: #64748b; margin-bottom: 5px; }
-.learner-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .learner-note { color: #64748b; font-size: .77rem; line-height: 1.6; margin: 10px 0 16px; }
-.learner-alert { padding: 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; margin: 14px 0; color: #9a3412; font-size: .85rem; }
 .learner-empty { padding: 60px 16px; text-align: center; color: #64748b; }
 .learner-filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; padding: 18px; margin: 18px 0; }
 .learner-filters label { display: flex; flex-direction: column; gap: 5px; font-size: .72rem; color: #475569; }

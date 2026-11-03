@@ -12,7 +12,7 @@ import {
 import { useDashboard } from '../../store/useDashboardStore';
 import { STANDARD_UNITS, UNIT_COLORS } from '../../config/units';
 import { STATUS_LABELS } from '../../types/project';
-import { budgetSummary, budgetTiers as buildBudgetTiers, collaborationCount, flagCount, isAcceptedProject, projectFlag } from '../../services/projectAnalytics';
+import { budgetSummary, budgetTiers as buildBudgetTiers, collaborationCount, flagCount, isAcceptedProject } from '../../services/projectAnalytics';
 
 export const FinanceView: React.FC = () => {
   const { filteredProjects, theme, setSelectedProject } = useDashboard();
@@ -180,11 +180,10 @@ export const FinanceView: React.FC = () => {
           </div>
           <div>
             <div className="finance-val">{fmt(collabCount)}</div>
-            <div className="finance-sub">Có tài trợ / hợp tác DN, CSYT hoặc quốc tế (mỗi đề tài tính một lần)</div>
+            <div className="finance-sub">Có tài trợ / hợp tác</div>
           </div>
         </div>
       </div>
-      <p className="chart-note">Có {projects.filter((project) => projectFlag(project, 'liquidated') === null).length} hồ sơ chưa cập nhật thanh lý; các ô trống không được tính là chưa thanh lý.</p>
 
       {/* Row Charts: Unit Budget & Budget Range */}
       <div className="charts-grid-2">

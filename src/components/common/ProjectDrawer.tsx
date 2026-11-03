@@ -6,7 +6,6 @@ import {
   User,
   Coins,
   FileText,
-  AlertCircle,
   ExternalLink,
   Award,
   Clock,
@@ -22,7 +21,6 @@ import {
   STATUS_COLORS,
   STATUS_LABELS,
 } from '../../types/project';
-import { projectSourceUrl } from '../../services/projectTable';
 import { isAcceptedProject, projectFlag } from '../../services/projectAnalytics';
 
 interface ProjectDrawerProps {
@@ -66,20 +64,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose }
         <div className="drawer-title-box">
           <h2 className="drawer-project-title">{project.title}</h2>
           {project.code && <div className="drawer-project-code">Mã số đề tài: {project.code}</div>}
-          <a className="proof-link" href={projectSourceUrl(project)} target="_blank" rel="noreferrer">Google Sheet · dòng {project.sourceRow} <ExternalLink size={14} /></a>
         </div>
-
-        {/* Quality Alerts */}
-        {project.qualityIssues.length > 0 && (
-          <div className="drawer-alerts-box">
-            {project.qualityIssues.map((issue, idx) => (
-              <div key={idx} className={`drawer-alert alert-${issue.severity}`}>
-                <AlertCircle size={16} />
-                <span>{issue.message}</span>
-              </div>
-            ))}
-          </div>
-        )}
 
         <div className="drawer-body">
           {/* 1. General & Timeline */}

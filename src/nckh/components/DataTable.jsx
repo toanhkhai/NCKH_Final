@@ -454,7 +454,7 @@ export const DataTable = ({ records = [], loading = false }) => {
                 <div className="mt-6 pt-5 border-t border-slate-200">
                   <div className="mb-4">
                     <span className="inline-block text-sm font-semibold text-white bg-emerald-500 px-3 py-1.5 rounded shadow-sm">
-                      Dữ liệu thô từ Google Sheet (đã ẩn các trường trống):
+                      Thông tin bổ sung
                     </span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm">

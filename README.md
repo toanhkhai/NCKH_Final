@@ -58,8 +58,9 @@ Lệnh này chạy kiểm thử bộ đọc dữ liệu Người học, dữ li�
 
 ## Dữ liệu và quyền truy cập
 
+- Giao diện sử dụng chỉ hiển thị số liệu, bộ lọc và thao tác nghiệp vụ; không hiển thị trạng thái đọc Sheet, thông báo chẩn đoán hay liên kết mở bảng nguồn. Lỗi tải dữ liệu có thông báo ngắn và nút thử lại. Quy tắc tính và đối chiếu chi tiết được lưu trong `docs/`.
 - Phần đề tài đọc 6 tab Google Sheets qua `/api/sheet`; Vite dev server, Node server và Cloudflare Worker đều giữ proxy từ project gốc. Nếu proxy không khả dụng, client thử tải CSV trực tiếp từ Google.
-- Hai nhóm đề tài đọc dữ liệu khi mở lần đầu và khi bấm Làm mới, có hiển thị giờ đọc. Chưa tự cập nhật liên tục khi trang đang mở. Năm mới được lấy từ dữ liệu; thêm tab/workbook cần cập nhật cấu hình và proxy.
+- Hai nhóm đề tài đọc dữ liệu khi mở lần đầu và khi tải lại trang. Chưa tự cập nhật liên tục khi trang đang mở. Năm mới được lấy từ dữ liệu; thêm tab/workbook cần cập nhật cấu hình và proxy.
 - Phần người học đọc hai tab của bảng `1C6OhjeY0QCMsQnHaQUz7_Hg-I5jnYx02`, dùng `/api/sheet?dataset=learners&gid=...`. Không dùng chung dữ liệu với Cán bộ dù các gid trùng nhau. Xem thiết kế và quy tắc tính tại [docs/learner-dashboard.md](docs/learner-dashboard.md).
 - Phần công bố đọc trực tiếp 2 nguồn Google Sheets gốc; bộ lọc, biểu đồ, đăng nhập Google, phân quyền và xuất CSV theo phạm vi được phép đều được giữ lại. Toàn ứng dụng dùng một hộp đăng nhập và một phiên tài khoản.
 - Danh sách phân quyền trong `src/nckh/data/whitelist.json`. Khi chạy Vite dev server, thay đổi từ giao diện có thể lưu lại file này qua `/_api/save-whitelist`. Ở bản dựng tĩnh, thay đổi trên giao diện được lưu trong trình duyệt hiện tại; muốn áp dụng chung cho mọi người dùng, hãy cập nhật file và triển khai lại.

@@ -25,7 +25,6 @@ export const ProgressView: React.FC = () => {
   const overdueProjects = projects.filter((p) => p.status === 'QUA_HAN');
   const extendedProjects = projects.filter((p) => p.isExtended);
   const stoppedProjects = projects.filter((p) => p.isStopped);
-  const unknownProgressCount = projects.filter((p) => p.status === 'CHUA_CAP_NHAT' || p.status === 'CHO_NGHIEM_THU').length;
   const hasKnownProgress = projects.some((p) => p.status !== 'CHUA_CAP_NHAT' && p.status !== 'CHO_NGHIEM_THU');
 
   // Chart 1: Dual Bar: Nghiệm thu theo năm giao vs Nghiệm thu theo năm Thống kê
@@ -139,8 +138,6 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-      <p className="chart-note">Chỉ đếm trạng thái đã có dữ liệu xác nhận. Có {unknownProgressCount} hồ sơ chưa đủ dữ liệu tiến độ hoặc còn chờ xác nhận nghiệm thu; không tự xem các hồ sơ này là chưa nghiệm thu hay không quá hạn.</p>
-
       {/* Dual Bar Chart */}
       <div className="chart-card glass-card">
         <div className="chart-card-header">
@@ -154,9 +151,6 @@ export const ProgressView: React.FC = () => {
         <div className="chart-wrapper">
           <ReactECharts option={dualBarOption} style={{ height: '360px', width: '100%' }} />
         </div>
-        <p className="chart-note">
-          Năm giao lấy theo nhóm năm giao trên Sheet; năm thống kê lấy theo năm nghiệm thu của đề tài đã xác nhận nghiệm thu. Có {acceptance.missingAcceptanceYear} hồ sơ đã nghiệm thu chưa cập nhật năm nghiệm thu.
-        </p>
       </div>
 
       {/* Cancellation Batches & Overdue Warnings */}
@@ -199,7 +193,7 @@ export const ProgressView: React.FC = () => {
             </div>
           </div>
           <div className="warning-scroll-list">
-            {!overdueProjects.length && <p className="chart-note">Chưa ghi nhận đề tài quá hạn trong các hồ sơ đủ dữ liệu để xác định tiến độ.</p>}
+            {!overdueProjects.length && <p className="chart-note">Chưa ghi nhận đề tài quá hạn theo bộ lọc.</p>}
             {overdueProjects.slice(0, 8).map((p) => (
               <div
                 key={p.id}

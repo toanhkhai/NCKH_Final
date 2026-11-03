@@ -2,7 +2,6 @@ import Papa from 'papaparse';
 import { parseNullableBooleanFlag } from '../services/normalizer.ts';
 
 export const LEARNER_SHEET_ID = '1C6OhjeY0QCMsQnHaQUz7_Hg-I5jnYx02';
-export const LEARNER_SOURCE = `https://docs.google.com/spreadsheets/d/${LEARNER_SHEET_ID}/edit`;
 export const learnerViews = ['overview', 'projects', 'people', 'progress', 'outputs', 'quality'] as const;
 export type LearnerView = typeof learnerViews[number];
 export type LearnerProject = {

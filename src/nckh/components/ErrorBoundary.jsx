@@ -38,7 +38,7 @@ export class ErrorBoundary extends React.Component {
             </div>
             <h2 className="text-base font-semibold text-slate-800 mb-2">Đã xảy ra sự cố hiển thị</h2>
             <p className="text-xs text-slate-500 mb-4 leading-relaxed break-words">
-              {this.state.error?.message || 'Có lỗi không xác định xảy ra khi kết xuất giao diện Dashboard.'}
+              Không thể hiển thị nội dung lúc này. Vui lòng tải lại trang để thử lại.
             </p>
             <button
               onClick={this.handleReset}

@@ -83,12 +83,11 @@
 .app-layout .project-account { border-color: var(--border-card); border-radius: 4px; box-shadow: none; }
 .app-layout .project-account-details strong { color: var(--text-primary); font-weight: 600; }
 .app-layout .project-account-details small { color: var(--text-muted); }
-.app-layout .dashboard-data-status { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; color: var(--text-muted); font-size: 12px; }
 .app-layout :is(.view-title, .units-heading h2, .learner-heading h2) { color: #263e4a; font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1.45; }
 .app-layout :is(.view-subtitle, .units-heading p) { color: var(--text-muted); font-size: 13px; line-height: 1.65; margin-top: 6px; }
 .app-layout .view-intro-box { margin-bottom: 20px; }
 .app-layout :is(.chart-title, .recon-title, .section-title, .learner-card h3) { color: #344b57; font-size: 14px; font-weight: 600; letter-spacing: 0; line-height: 1.55; }
-.app-layout :is(.chart-note, .unit-chart-description, .learner-note, .catalog-data-note) { color: var(--text-muted); font-size: 12px; line-height: 1.65; }
+.app-layout :is(.chart-note, .unit-chart-description, .learner-note) { color: var(--text-muted); font-size: 12px; line-height: 1.65; }
 .app-layout .title-icon { color: #71878f; flex-shrink: 0; stroke-width: 1.6; }
 
 /* Metric cards: labels are readable, numbers carry the emphasis. */
@@ -151,7 +150,6 @@
 .app-layout :is(button, a) > .lucide { stroke-width: 1.7; }
 .app-layout :is(button, select, input, a, [role='button']):focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
 .app-layout :is(button, input, select):disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
-.app-layout .dashboard-data-status button:disabled { cursor: wait; }
 .app-layout :is(.badge, .unit-badge, .level-badge-inline, .drawer-level-tag, .severity-tag, .stt-badge) { border-radius: 3px; font-size: 11px; font-weight: 500; letter-spacing: 0; }
 .app-layout :is(.badge-primary, .unit-badge, .drawer-level-tag) { color: #4b6c7c; background: #f0f5f5; border-color: #dce6e7; }
 .app-layout .badge-success { color: #3c7458; background: #f1f7f0; border-color: #dce9d9; }
@@ -223,7 +221,9 @@
 .app-layout .empty-icon-wrapper { color: #728a93; background: #f4f7f2; border-color: #e1e8dc; }
 .app-layout .empty-title { color: #354f5b; font-size: 18px; font-weight: 600; }
 .app-layout .empty-desc { color: var(--text-muted); font-size: 13px; line-height: 1.65; }
-.app-layout .reconciliation-banner { color: #53725e; background: #f3f8f0; border-color: #dce7d6; box-shadow: none; font-size: 13px; }
+.app-layout .data-load-alert { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 16px; margin-bottom: 18px; color: #92400e; background: #fffbeb; border: 1px solid #f3dfb0; border-radius: 4px; font-size: 13px; }
+.app-layout .data-load-alert > span { flex: 1; }
+.app-layout .data-load-alert > svg { flex-shrink: 0; }
 
 /* Learner records and native detail dialog. */
 .app-layout .learner-metric { padding: 20px; border-top: 1px solid var(--border-card); gap: 12px; }
