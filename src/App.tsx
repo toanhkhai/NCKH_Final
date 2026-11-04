@@ -22,23 +22,17 @@ const PublicationsDashboard = lazy(() => import('./nckh/App.jsx'));
 const LearnerDashboard = lazy(() => import('./learners/LearnerDashboard'));
 
 function ProjectsDashboard({ view, isAdmin, onNavigate, onLogin }: { view: DashboardView; isAdmin: boolean; onNavigate: (view: DashboardView) => void; onLogin: () => void }) {
-  const { activeView, setActiveView, selectedProject, setSelectedProject, filters, updateFilters, isLoading, error, refreshData, data } = useDashboard();
+  const { activeView, setActiveView, selectedProject, setSelectedProject, isLoading, error, refreshData, data } = useDashboard({ allowFilters: isAdmin });
   const hideCatalogFields = !isAdmin && view === 'projects';
 
   useEffect(() => {
     if (activeView !== view) setActiveView(view);
   }, [activeView, setActiveView, view]);
 
-  useEffect(() => {
-    if (hideCatalogFields && (filters.status !== 'ALL' || filters.grade !== 'ALL' || filters.budgetRange[0] > 0 || Number.isFinite(filters.budgetRange[1]))) {
-      updateFilters({ status: 'ALL', grade: 'ALL', budgetRange: [0, Infinity] });
-    }
-  }, [hideCatalogFields, filters, updateFilters]);
-
   return (
     <main className="view-container">
       <Navbar onLogin={onLogin} title="ĐỀ TÀI CÁN BỘ — THỐNG KÊ KẾT QUẢ & HIỆU QUẢ KHCN" />
-      <FilterBar hideCatalogFields={hideCatalogFields} />
+      {isAdmin && <FilterBar />}
       {error && (
         <div role="alert" className="data-load-alert">
           <AlertCircle size={18} />
@@ -57,7 +51,7 @@ function ProjectsDashboard({ view, isAdmin, onNavigate, onLogin }: { view: Dashb
           {view === 'overview' && <OverviewView isAdmin={isAdmin} />}
           {view === 'units' && <UnitsView onOpenProjects={() => onNavigate('projects')} />}
           {view === 'progress' && <ProgressView />}
-          {view === 'people' && <PeopleView />}
+          {view === 'people' && <PeopleView isAdmin={isAdmin} />}
           {view === 'finance' && <FinanceView />}
           {view === 'projects' && <ProjectsTableView isAdmin={isAdmin} />}
           {view === 'data-quality' && <DataQualityView />}
@@ -150,7 +144,7 @@ export default function App() {
         {visited.learners && (
           <div className="dashboard-pane projects-pane" hidden={route.area !== 'learners'}>
             <ErrorBoundary><Suspense fallback={<div className="combined-loading">Đang mở dashboard người học…</div>}>
-              <LearnerDashboard view={route.area === 'learners' ? route.view : 'overview'} onLogin={openLogin} />
+              <LearnerDashboard view={route.area === 'learners' ? route.view : 'overview'} isAdmin={projectRole === 'admin'} onLogin={openLogin} />
             </Suspense></ErrorBoundary>
           </div>
         )}

@@ -1,10 +1,31 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildUnitYearHeatmap, heatmapTone } from '../src/services/unitHeatmap.ts';
+import { buildUnitYearHeatmap, buildUnitYearBars, heatmapTone } from '../src/services/unitHeatmap.ts';
 import { filterProjects, DEFAULT_PROJECT_FILTERS } from '../src/services/projectTable.ts';
 
 const project = (unit, year, patch = {}) => ({ assigningUnit: unit, assignmentYear: year, startYear: year, members: [], ...patch });
 const count = (model, unit, year) => model.cells.find(([x, y]) => model.units[y] === unit && model.years[x] === year)?.[2];
+
+test('unit bars preserve nine columns, dynamic assignment years and every record outside the nine units', () => {
+  const records = [
+    project('Khoa Y', 2026, { startYear: 2024 }), project('Khoa Y', undefined), project('Khoa Dược', 2034),
+    project('Chưa xác định đơn vị', 2026), project('Đơn vị ngoài trường', 2034),
+  ];
+  const result = buildUnitYearBars(records);
+  assert.equal(result.units.length, 9);
+  assert.deepEqual(result.series.map(({ year }) => year), [2026, 2034, null]);
+  assert.equal(result.series[0].values[result.units.indexOf('Khoa Y')], 1);
+  assert.equal(result.series[1].values[result.units.indexOf('Khoa Dược')], 1);
+  assert.equal(result.series[2].values[result.units.indexOf('Khoa Y')], 1);
+  assert.ok(result.series.every(({ values }) => values.length === 9));
+  assert.equal(result.shownTotal, 3);
+  assert.equal(result.shownTotal + result.otherUnits.reduce((sum, { count }) => sum + count, 0), records.length);
+  assert.deepEqual(result.otherUnits, [{ unit: 'Chưa xác định đơn vị', count: 1 }, { unit: 'Đơn vị ngoài trường', count: 1 }]);
+  const filtered = buildUnitYearBars(filterProjects(records, { ...DEFAULT_PROJECT_FILTERS, unit: 'Khoa Y', year: 2026 }));
+  assert.equal(filtered.total, 1);
+  assert.equal(filtered.shownTotal, 1);
+  assert.deepEqual(filtered.otherUnits, []);
+});
 
 test('every project contributes once to its host unit and assignment year', () => {
   const projects = [project('Khoa Y', 2025), project('Khoa Y', 2025), project('Khoa Dược', 2026)];

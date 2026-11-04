@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import { SHEETS_CONFIG } from '../src/config/sheets.ts';
 import { STANDARD_UNITS, normalizeUnit } from '../src/config/units.ts';
 import { parseCsvToMatrix, parseProjectSheet, parseSummarySheet, reconcileDashboardData, loadAllDashboardData } from '../src/services/dataLoader.ts';
-import { yearSeries, acceptanceSeries, budgetSummary, budgetTiers, flagCount, projectFlag, collaborationCount, researcherStats } from '../src/services/projectAnalytics.ts';
+import { yearSeries, acceptanceSeries, budgetSummary, budgetTiers, flagCount, projectFlag, collaborationCount, researcherStats, projectLevelCounts } from '../src/services/projectAnalytics.ts';
 import { fetchSheetCsv } from '../src/services/sheetFetcher.ts';
 import { countLearnerFlags, learnerChartGroups, sumKnown, parseLearnerProjects } from '../src/learners/data.ts';
 import { parseDateFromString } from '../src/services/normalizer.ts';
@@ -18,6 +18,25 @@ const summaryHeaders = ['', 'Tên đề tài', 'Tổng số đề tài đã giao
 const levels = ['CẤP TRƯỜNG', 'CẤP TỈNH', 'CẤP BỘ', 'CẤP QUỐC GIA', 'HTQT'];
 const summaryCsv = (period, counts = [1, 0, 0, 0, 0], money = [10, 0, 0, 0, 0]) => Papa.unparse([summaryHeaders, ...levels.map((level, i) => [i ? '' : period, level, counts[i], ...STANDARD_UNITS.map((_, j) => j ? 0 : counts[i]), counts[i], counts[i], money[i]])]);
 const statuses = () => Object.fromEntries(SHEETS_CONFIG.map((entry) => [entry.id, { loaded: true, rowCount: 1 }]));
+
+test('project classification uses source levels, including the HTQT sheet, and retains all five groups', () => {
+  const htqt = SHEETS_CONFIG.find((entry) => entry.id === 'htqt');
+  assert.equal(htqt.level, 'HTQT');
+  assert.equal(htqt.title, 'Hợp tác quốc tế');
+  const international = parseProjectSheet(parseCsvToMatrix(csv([
+    raw({ 'Đề tài có hợp tác quốc tế': '0' }), raw({ STT: '2', 'Tên đề tài': 'Hồ sơ HTQT B' }),
+  ])), htqt.level, htqt);
+  const records = [
+    project({ hasInternationalCollab: true }), project({ isStopped: true }),
+    project({ level: 'TINH' }), project({ level: 'QUOC_GIA' }), ...international,
+  ];
+  const groups = projectLevelCounts(records);
+  assert.deepEqual(groups.map(({ level, value }) => [level, value]), [['TRUONG', 2], ['TINH', 1], ['BO', 0], ['QUOC_GIA', 1], ['HTQT', 2]]);
+  assert.equal(groups.find((group) => group.level === 'HTQT').name, 'Hợp tác quốc tế');
+  assert.equal(groups.reduce((total, group) => total + group.value, 0), records.length);
+  assert.deepEqual(projectLevelCounts(records.filter((record) => record.level === 'HTQT')).map((group) => group.value), [0, 0, 0, 0, 2]);
+  assert.deepEqual(projectLevelCounts([]).map((group) => group.value), [0, 0, 0, 0, 0]);
+});
 
 test('duplicate project codes warn on every source row without dropping distinct records', () => {
   const columns = [...headers, 'Mã số đề tài'];

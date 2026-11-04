@@ -41,7 +41,7 @@ function notify() {
   listeners.forEach((l) => l());
 }
 
-export function useDashboard() {
+export function useDashboard({ allowFilters = true }: { allowFilters?: boolean } = {}) {
   const [, setTick] = useState(0);
 
   useEffect(() => {
@@ -113,11 +113,12 @@ export function useDashboard() {
   }, [refreshData]);
 
   // Filtered projects selector
+  const filters = allowFilters ? state.filters : INITIAL_FILTERS;
   const filteredProjects = useMemo(() => {
     if (!state.data?.projects) return [];
 
-    return filterProjects(state.data.projects, state.filters);
-  }, [state.data?.projects, state.filters]);
+    return filterProjects(state.data.projects, filters);
+  }, [state.data?.projects, filters]);
 
   const availableYears = useMemo(() => {
     if (!state.data?.projects) return [];
@@ -137,7 +138,7 @@ export function useDashboard() {
     setActiveView,
     selectedProject: state.selectedProject,
     setSelectedProject,
-    filters: state.filters,
+    filters,
     updateFilters,
     resetFilters,
     filteredProjects,

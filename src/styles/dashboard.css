@@ -702,6 +702,19 @@
   margin-bottom: 1.5rem;
 }
 
+.overview-user-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+.overview-user-charts > .charts-grid-2 { display: contents; }
+.overview-user-charts .overview-unit-chart { grid-column: 1; grid-row: 1; }
+.overview-user-charts .overview-level-chart { grid-column: 2; grid-row: 1; }
+.overview-year-chart { width: 100%; margin-bottom: 1.5rem; }
+.overview-unit-year-scroll { width: 100%; overflow-x: auto; }
+.overview-unit-year-canvas { min-width: 900px; }
+
+@media (max-width: 1100px) {
+  .overview-user-charts { grid-template-columns: minmax(0, 1fr); }
+  .overview-user-charts .overview-level-chart { grid-column: 1; grid-row: 2; }
+}
+
 @media (max-width: 640px) {
   .charts-grid-2 {
     grid-template-columns: 1fr;
@@ -749,6 +762,25 @@
   width: 100%;
   min-height: 280px;
 }
+
+.project-level-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 340px;
+}
+.project-level-plot { position: relative; min-width: 0; }
+.project-level-total { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; pointer-events: none; }
+.project-level-total strong { font-size: 26px; line-height: 32px; color: var(--text-primary); }
+.project-level-total span { font-size: 12px; line-height: 18px; color: var(--text-muted); }
+.project-level-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.project-level-legend li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.project-level-dot { width: 10px; height: 10px; border-radius: 50%; }
+.project-level-name { font-size: 13px; line-height: 1.5; color: var(--text-secondary); overflow-wrap: anywhere; }
+.project-level-value { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums; }
+.project-level-value strong { font-size: 14px; color: var(--text-primary); }
+.project-level-value small { font-size: 12px; color: var(--text-muted); }
 
 .chart-note {
   font-size: 0.74rem;

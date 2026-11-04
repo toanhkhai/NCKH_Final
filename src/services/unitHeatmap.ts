@@ -26,6 +26,20 @@ export function buildUnitYearHeatmap(projects: HeatmapProject[], context: { year
   return { units, years, cells, total: projects.length, max: Math.max(0, ...cells.map((cell) => cell[2])) };
 }
 
+export function buildUnitYearBars(projects: HeatmapProject[]) {
+  const matrix = buildUnitYearHeatmap(projects);
+  const units = [...STANDARD_UNITS];
+  const series = matrix.years.map((year, yearIndex) => {
+    const cells = matrix.cells.filter(([x]) => x === yearIndex);
+    return { year, values: units.map((unit) => cells[matrix.units.indexOf(unit)]?.[2] ?? 0) };
+  });
+  const otherUnits = matrix.units.filter((unit) => !units.includes(unit)).map((unit) => ({
+    unit, count: matrix.cells.filter(([, index]) => matrix.units[index] === unit).reduce((sum, [, , count]) => sum + count, 0),
+  })).filter(({ count }) => count > 0);
+  const shownTotal = series.reduce((sum, entry) => sum + entry.values.reduce((count, value) => count + value, 0), 0);
+  return { units, series, otherUnits, shownTotal, total: matrix.total };
+}
+
 export function heatmapTone(count: number, max: number) {
   if (count <= 0) return { background: '#f1f5f9', text: '#475569' };
   const ratio = max <= 1 ? 1 : Math.min(1, Math.max(0, (count - 1) / (max - 1)));

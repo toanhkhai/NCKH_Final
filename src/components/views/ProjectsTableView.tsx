@@ -8,7 +8,7 @@ import '../../styles/project-catalog.css';
 const formatNumber = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 });
 
 export function ProjectsTableView({ isAdmin = false }: { isAdmin?: boolean }) {
-  const { filteredProjects, setSelectedProject, resetFilters, isLoading } = useDashboard();
+  const { filteredProjects, setSelectedProject, resetFilters, isLoading } = useDashboard({ allowFilters: isAdmin });
   const [requestedPage, setRequestedPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [sortField, setSortField] = useState<ProjectSortField>('assignmentYear');
@@ -43,7 +43,7 @@ export function ProjectsTableView({ isAdmin = false }: { isAdmin?: boolean }) {
 
   return <section className="project-catalog" aria-label="Danh mục đề tài cán bộ" aria-busy={isLoading}>
     <div className="catalog-toolbar">
-      <div><h2>Danh mục đề tài</h2><p>{formatNumber.format(sorted.length)} đề tài theo bộ lọc{sorted.length > 0 && ` · Dòng ${page.offset + 1}–${Math.min(page.offset + pageSize, sorted.length)}`}</p></div>
+      <div><h2>Danh mục đề tài</h2><p>{formatNumber.format(sorted.length)} đề tài{isAdmin && ' theo bộ lọc'}{sorted.length > 0 && ` · Dòng ${page.offset + 1}–${Math.min(page.offset + pageSize, sorted.length)}`}</p></div>
       <div className="catalog-tools">
         <label>Số dòng <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setRequestedPage(1); }}>
           {[15, 25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
@@ -81,7 +81,7 @@ export function ProjectsTableView({ isAdmin = false }: { isAdmin?: boolean }) {
           </div></td>
         </tr>)}</tbody>
       </table>
-      {!sorted.length && <div className="catalog-empty"><p>{isLoading ? 'Đang tải dữ liệu…' : 'Không có đề tài phù hợp với bộ lọc.'}</p><button type="button" onClick={resetFilters}>Đặt lại bộ lọc</button></div>}
+      {!sorted.length && <div className="catalog-empty"><p>{isLoading ? 'Đang tải dữ liệu…' : isAdmin ? 'Không có đề tài phù hợp với bộ lọc.' : 'Chưa có dữ liệu đề tài.'}</p>{isAdmin && <button type="button" onClick={resetFilters}>Đặt lại bộ lọc</button>}</div>}
     </div>
     <div className="catalog-footer">
       <nav className="catalog-pagination" aria-label="Phân trang đề tài">

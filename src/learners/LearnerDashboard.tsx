@@ -11,6 +11,7 @@ const titles: Record<LearnerView, string> = {
   progress: 'Tiến độ & nghiệm thu', outputs: 'Kinh phí & sản phẩm nghiên cứu', quality: 'Chất lượng dữ liệu',
 };
 const fmt = (n: number | null) => n === null ? 'Chưa cập nhật' : n.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+const EMPTY_FILTERS = { year: '', unit: '', className: '', cohort: '', status: '', search: '' };
 const group = (items: string[]) => Object.entries(items.reduce<Record<string, number>>((out, value) => {
   const key = value || 'Chưa cập nhật'; out[key] = (out[key] || 0) + 1; return out;
 }, {})).sort((a, b) => b[1] - a[1]);
@@ -40,11 +41,12 @@ function Detail({ project, onClose }: { project: LearnerProject; onClose: () => 
   </dialog>;
 }
 
-export default function LearnerDashboard({ view, onLogin }: { view: LearnerView; onLogin: () => void }) {
+export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { view: LearnerView; isAdmin?: boolean; onLogin: () => void }) {
   const [data, setData] = useState<LearnerData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState({ year: '', unit: '', className: '', cohort: '', status: '', search: '' });
+  const [adminFilters, setFilters] = useState(EMPTY_FILTERS);
+  const filters = isAdmin ? adminFilters : EMPTY_FILTERS;
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LearnerProject | null>(null);
   const inFlight = useRef(false);
@@ -104,16 +106,16 @@ export default function LearnerDashboard({ view, onLogin }: { view: LearnerView;
           <Metric label="Chưa có hồ sơ chi tiết" value={fmt(totals.missing)} />
         </div>
       </>}
-      <div className="learner-filters glass-card">
+      {isAdmin && <div className="learner-filters glass-card">
         <label className="learner-search">Tìm kiếm<input placeholder="Tên đề tài, mã số, người học, cán bộ hướng dẫn…" value={filters.search} onChange={(e) => change('search', e.target.value)} /></label>
         {([['year', 'Năm giao'], ['unit', 'Đơn vị quản lý'], ['className', 'Lớp'], ['cohort', 'Khóa'], ['status', 'Trạng thái']] as const).map(([field, label]) => <label key={field}>{label}<select aria-label={label} value={filters[field]} onChange={(e) => change(field, e.target.value)}><option value="">Tất cả</option>{options(field).map((v) => <option key={v}>{v}</option>)}</select></label>)}
         <button type="button" className="btn-secondary" onClick={() => setFilters({ year: '', unit: '', className: '', cohort: '', status: '', search: '' })}>Đặt lại</button>
         <span className="learner-filter-count">{filtered.length} / {all.length} hồ sơ chi tiết</span>
-      </div>
+      </div>}
       {data.projects !== null && <>
         {view === 'overview' && <>
           <div className="learner-metrics">
-            <Metric label="Hồ sơ theo bộ lọc" value={filtered.length} />
+            <Metric label={isAdmin ? 'Hồ sơ theo bộ lọc' : 'Hồ sơ chi tiết'} value={filtered.length} />
             <Metric label="Đã nghiệm thu" value={fmt(accepted)} />
             <Metric label="Kinh phí (triệu đồng)" value={fmt(sumKnown(filtered.map((p) => p.budget)))} />
             <Metric label="Bài báo" value={fmt(sumKnown(filtered.map((p) => p.publications)))} />
@@ -121,7 +123,7 @@ export default function LearnerDashboard({ view, onLogin }: { view: LearnerView;
           <div className="learner-grid"><Bars title="Đề tài theo đơn vị quản lý" values={group(filtered.map((p) => p.unit))} /><Bars title="Đề tài theo năm giao" showAll values={group(filtered.map((p) => p.year)).sort((a, b) => a[0].localeCompare(b[0]))} /></div>
         </>}
         {view === 'projects' && <section className="glass-card learner-card">
-          <div className="learner-heading"><h3>{filtered.length} hồ sơ chi tiết theo bộ lọc</h3><button type="button" className="btn-secondary" disabled={!filtered.length} onClick={exportCsv}><Download size={15} /> Xuất CSV theo bộ lọc</button></div>
+          <div className="learner-heading"><h3>{filtered.length} hồ sơ chi tiết{isAdmin && ' theo bộ lọc'}</h3><button type="button" className="btn-secondary" disabled={!filtered.length} onClick={exportCsv}><Download size={15} /> Xuất CSV{isAdmin && ' theo bộ lọc'}</button></div>
           {renderTable(filtered.slice((page - 1) * 20, page * 20))}
           <div className="learner-pagination"><button className="btn-secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>Trước</button><span>Trang {page} / {Math.max(1, Math.ceil(filtered.length / 20))}</span><button className="btn-secondary" disabled={page * 20 >= filtered.length} onClick={() => setPage(page + 1)}>Sau</button></div>
         </section>}
@@ -129,7 +131,7 @@ export default function LearnerDashboard({ view, onLogin }: { view: LearnerView;
           <div className="learner-metrics"><Metric label="Lượt chủ nhiệm" value={filtered.filter((p) => p.leader).length} /><Metric label="Lượt thành viên" value={filtered.reduce((n, p) => n + p.members.length, 0)} /><Metric label="Cán bộ hướng dẫn" value={supervisors.length} /><Metric label="Chủ nhiệm có MSSV/MSHV" value={filtered.filter((p) => p.studentId).length} /></div>
           <div className="learner-grid">
             <Bars title="Quy mô nhóm người học" values={groupSizes} showAll minHeight={400} labelWidth={170} note="Số đề tài theo quy mô nhóm đã khai báo, gồm chủ nhiệm và thành viên người học." />
-            <Bars title="10 cán bộ hướng dẫn nhiều đề tài nhất" values={topSupervisors} showAll minHeight={400} labelWidth={190} wrapLabels note="Phân bố số đề tài theo cán bộ hướng dẫn trong phạm vi bộ lọc. Mỗi cán bộ được tính một lần trong một đề tài." />
+            <Bars title="10 cán bộ hướng dẫn nhiều đề tài nhất" values={topSupervisors} showAll minHeight={400} labelWidth={190} wrapLabels note={`Phân bố số đề tài theo cán bộ hướng dẫn${isAdmin ? ' trong phạm vi bộ lọc' : ''}. Mỗi cán bộ được tính một lần trong một đề tài.`} />
           </div>
           <section className="glass-card learner-card"><h3>Phân công hướng dẫn</h3><div className="learner-table-wrap"><table className="learner-table"><thead><tr><th>Cán bộ hướng dẫn</th><th>Đơn vị</th><th>Số đề tài</th></tr></thead><tbody>{supervisors.map((s) => <tr key={s.key}><td>{s.name}</td><td>{s.unit || 'Chưa cập nhật'}</td><td>{s.count}</td></tr>)}</tbody></table></div></section>
         </>}

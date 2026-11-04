@@ -15,8 +15,8 @@ import { STATUS_LABELS } from '../../types/project';
 import { personSearchText, researcherStats } from '../../services/projectAnalytics';
 import { projectAssignmentYear } from '../../services/projectTable';
 
-export const PeopleView: React.FC = () => {
-  const { filteredProjects, theme, setSelectedProject } = useDashboard();
+export const PeopleView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false }) => {
+  const { filteredProjects, theme, setSelectedProject } = useDashboard({ allowFilters: isAdmin });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedResearcher, setSelectedResearcher] = useState<string | null>(null);
 

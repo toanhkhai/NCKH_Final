@@ -1,4 +1,4 @@
-import type { Member, Project } from '../types/project.ts';
+import { LEVEL_LABELS, type Member, type Project, type ProjectLevel } from '../types/project.ts';
 import { projectAssignmentYear } from './projectTable.ts';
 
 export type SourceFlag = keyof NonNullable<Project['sourceFlags']>;
@@ -9,6 +9,11 @@ const flagFields = {
 export const projectFlag = (project: Project, flag: SourceFlag): boolean | null =>
   project.sourceFlags ? project.sourceFlags[flag] : project[flagFields[flag]];
 export const isAcceptedProject = (project: Project) => project.isAccepted && !project.isStopped;
+
+export function projectLevelCounts(projects: Pick<Project, 'level'>[]) {
+  const levels: ProjectLevel[] = ['TRUONG', 'TINH', 'BO', 'QUOC_GIA', 'HTQT'];
+  return levels.map((level) => ({ level, name: LEVEL_LABELS[level], value: projects.filter((project) => project.level === level).length }));
+}
 
 export function flagCount(projects: Project[], flag: SourceFlag, expected = true): number | null {
   if (!projects.length) return 0;

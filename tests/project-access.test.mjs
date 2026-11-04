@@ -4,6 +4,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
+import { DEFAULT_PROJECT_FILTERS } from '../src/services/projectTable.ts';
 import { getProjectRole, canAccessProjectView, resolveProjectAccessRoute } from '../src/services/projectAccess.ts';
 import { projectViews, publicationViews, resolveRouteLocation, routePath } from '../src/routing.ts';
 import { learnerViews } from '../src/learners/data.ts';
@@ -50,6 +52,52 @@ const { Sidebar } = await vite.ssrLoadModule('/src/components/common/Sidebar.tsx
 const { ProjectsTableView } = await vite.ssrLoadModule('/src/components/views/ProjectsTableView.tsx');
 const { ProjectDrawer } = await vite.ssrLoadModule('/src/components/common/ProjectDrawer.tsx');
 const { FilterBar } = await vite.ssrLoadModule('/src/components/common/FilterBar.tsx');
+const { useDashboard } = await vite.ssrLoadModule('/src/store/useDashboardStore.ts');
+const { default: App } = await vite.ssrLoadModule('/src/App.tsx');
+const { AuthProvider } = await vite.ssrLoadModule('/src/nckh/context/AuthContext.jsx');
+
+test('view 1 ignores saved admin filters immediately and preserves the admin selection', () => {
+  let store;
+  function Probe({ allowFilters }) { store = useDashboard({ allowFilters }); return null; }
+  const render = (allowFilters) => renderToStaticMarkup(createElement(Probe, { allowFilters }));
+  render(true);
+  try {
+    store.updateFilters({ year: 2026, unit: 'Khoa Y', searchQuery: 'Đề tài đã lọc', onlyExtended: true });
+    render(false);
+    assert.deepEqual(store.filters, DEFAULT_PROJECT_FILTERS);
+    render(true);
+    assert.equal(store.filters.year, 2026);
+    assert.equal(store.filters.unit, 'Khoa Y');
+    assert.equal(store.filters.searchQuery, 'Đề tài đã lọc');
+    assert.equal(store.filters.onlyExtended, true);
+  } finally { store.resetFilters(); }
+});
+
+test('staff filter bar is absent on all view 1 pages and unchanged for authenticated admins', () => {
+  const saved = Object.fromEntries(['window', 'localStorage'].map((key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
+  const whitelist = JSON.parse(readFileSync(new URL('../src/nckh/data/whitelist.json', import.meta.url), 'utf8'));
+  const storage = new Map();
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key) => storage.get(key) ?? null,
+    setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key),
+  } });
+  try {
+    for (const email of [null, 'user@example.com', whitelist.superAdmin]) {
+      storage.clear();
+      if (email) storage.set('ctump_auth_user', JSON.stringify({ email, name: 'Tài khoản kiểm tra', isGuest: false }));
+      for (const view of ['overview', 'people', 'projects']) {
+        Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { pathname: `/projects/staff/${view}`, hash: '', search: '' } } });
+        const html = renderToStaticMarkup(createElement(AuthProvider, null, createElement(App)));
+        assert.equal(html.includes('staff-filter-bar'), email === whitelist.superAdmin, `${email ?? 'guest'} / ${view}`);
+      }
+    }
+  } finally {
+    for (const key of ['window', 'localStorage']) {
+      if (saved[key]) Object.defineProperty(globalThis, key, saved[key]);
+      else delete globalThis[key];
+    }
+  }
+});
 
 test('rendered menus contain three entries for users and all existing entries for admins', () => {
   for (const area of ['projects', 'learners']) {
@@ -69,10 +117,8 @@ test('catalog columns and filters render the three restricted fields only for ad
     assert.equal(user.includes(label), false);
     assert.equal(admin.includes(label), true);
   }
-  const userFilters = renderToStaticMarkup(createElement(FilterBar, { hideCatalogFields: true }));
   const adminFilters = renderToStaticMarkup(createElement(FilterBar));
-  for (const field of ['staff-filter-status', 'staff-filter-grade']) {
-    assert.equal(userFilters.includes(field), false);
+  for (const field of ['staff-filter-year', 'staff-filter-unit', 'staff-filter-status', 'staff-filter-grade']) {
     assert.equal(adminFilters.includes(field), true);
   }
 });

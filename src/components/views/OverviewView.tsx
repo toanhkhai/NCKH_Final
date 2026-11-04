@@ -15,13 +15,17 @@ import {
 import { useDashboard } from '../../store/useDashboardStore';
 import { KpiCard } from '../common/KpiCard';
 import { EmptyState } from '../common/EmptyState';
-import { GRADE_COLORS, STATUS_COLORS, STATUS_LABELS, LEVEL_LABELS } from '../../types/project';
-import { yearSeries, budgetSummary, flagCount, isAcceptedProject } from '../../services/projectAnalytics';
+import { GRADE_COLORS, LEVEL_LABELS, type ProjectLevel } from '../../types/project';
+import { yearSeries, budgetSummary, flagCount, isAcceptedProject, projectLevelCounts } from '../../services/projectAnalytics';
 import { UNIT_COLORS, STANDARD_UNITS } from '../../config/units';
-import { buildUnitYearHeatmap } from '../../services/unitHeatmap';
+import { buildUnitYearBars } from '../../services/unitHeatmap';
+
+const levelColors: Record<ProjectLevel, string> = {
+  TRUONG: '#0284c7', TINH: '#10b981', BO: '#f59e0b', QUOC_GIA: '#ef4444', HTQT: '#8b5cf6',
+};
 
 export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false }) => {
-  const { data, filters, filteredProjects, theme, isLoading } = useDashboard();
+  const { data, filters, filteredProjects, theme, isLoading } = useDashboard({ allowFilters: isAdmin });
 
   if (isLoading) {
     return <EmptyState title="Đang tải dữ liệu…" description="" />;
@@ -43,10 +47,6 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
   const acceptedProjects = projects.filter(isAcceptedProject);
   const acceptedCount = acceptedProjects.length;
   const acceptedKnown = flagCount(projects, 'accepted');
-  const ongoingCount = projects.filter((p) => p.status === 'DANG_THUC_HIEN').length;
-  const overdueCount = projects.filter((p) => p.status === 'QUA_HAN').length;
-  const pendingCount = projects.filter((p) => p.status === 'CHO_NGHIEM_THU').length;
-  const unknownStatusCount = projects.filter((p) => p.status === 'CHUA_CAP_NHAT').length;
   const stoppedCount = projects.filter((p) => p.isStopped).length;
   const extendedCount = projects.filter((p) => p.isExtended).length;
   const budget = budgetSummary(projects);
@@ -146,63 +146,35 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
     ],
   };
 
-  const assignedByUnit = buildUnitYearHeatmap(projects);
+  const assignedByUnit = buildUnitYearBars(projects);
   const unitYearChartOption = {
     backgroundColor: 'transparent',
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (value: number) => `${value.toLocaleString('vi-VN')} đề tài` },
-    legend: { type: 'scroll', top: 0, textStyle: { color: textColor } },
-    grid: { left: '3%', right: '4%', bottom: 35, top: 75, containLabel: true },
+    tooltip: { trigger: 'axis', confine: true, axisPointer: { type: 'shadow' }, valueFormatter: (value: number) => `${value.toLocaleString('vi-VN')} đề tài` },
+    legend: { type: 'scroll', top: 0, left: 'center', textStyle: { color: textColor } },
+    grid: { left: 24, right: 24, bottom: 20, top: 65, containLabel: true },
     xAxis: {
-      type: 'category', name: 'Năm giao', nameLocation: 'middle', nameGap: 25, nameTextStyle: { color: textColor },
-      data: assignedByUnit.years.map((year) => year === null ? 'Chưa rõ' : String(year)),
-      axisLabel: { color: textColor }, axisLine: { lineStyle: { color: gridLineColor } },
+      type: 'category', data: assignedByUnit.units,
+      axisLabel: {
+        color: textColor, interval: 0, lineHeight: 18, margin: 14,
+        formatter: (unit: string) => unit === 'Phòng, trung tâm, thư viện' ? 'Phòng, trung tâm,\nthư viện' : unit === 'Khoa ĐD - KTYH' ? 'Khoa ĐD -\nKTYH' : unit,
+      },
+      axisLine: { lineStyle: { color: gridLineColor } },
     },
     yAxis: {
       type: 'value', name: 'Số đề tài', minInterval: 1, nameTextStyle: { color: textColor },
       axisLabel: { color: textColor }, splitLine: { lineStyle: { color: gridLineColor } },
     },
-    series: assignedByUnit.units.map((unit, index) => ({
-      name: unit, type: 'bar', stack: 'assigned',
-      itemStyle: { color: UNIT_COLORS[unit] },
-      data: assignedByUnit.cells.filter(([, unitIndex]) => unitIndex === index).map(([, , count]) => count),
+    series: assignedByUnit.series.map(({ year, values }) => ({
+      name: year === null ? 'Chưa rõ năm giao' : `Năm ${year}`, type: 'bar', stack: 'assigned', barMaxWidth: 80,
+      emphasis: { focus: 'series' },
+      data: values,
     })),
   };
 
-  // Chart 2: Status Donut Chart
-  const statusCounts = [
-    { name: 'Đã nghiệm thu', value: acceptedCount, itemStyle: { color: STATUS_COLORS.DA_NGHIEM_THU } },
-    { name: 'Đang thực hiện', value: ongoingCount, itemStyle: { color: STATUS_COLORS.DANG_THUC_HIEN } },
-    { name: 'Quá hạn', value: overdueCount, itemStyle: { color: STATUS_COLORS.QUA_HAN } },
-    { name: STATUS_LABELS.CHO_NGHIEM_THU, value: pendingCount, itemStyle: { color: STATUS_COLORS.CHO_NGHIEM_THU } },
-    { name: 'Đã ngưng / hủy', value: stoppedCount, itemStyle: { color: STATUS_COLORS.DA_HUY } },
-    { name: 'Chưa cập nhật trạng thái', value: unknownStatusCount, itemStyle: { color: STATUS_COLORS.CHUA_CAP_NHAT } },
-  ];
-
-  const statusDonutOption = {
+  // The HTQT source is its own project group, independent of collaboration flags.
+  const levelCounts = projectLevelCounts(projects);
+  const levelDonutOption = {
     backgroundColor: 'transparent',
-    title: {
-      text: `{val|${totalAssigned.toLocaleString('vi-VN')}}\n{lbl|Tổng đề tài}`,
-      left: '28%',
-      top: 'middle',
-      textAlign: 'center',
-      textStyle: {
-        rich: {
-          val: {
-            fontSize: 26,
-            fontWeight: 700,
-            color: isDark ? '#f8fafc' : '#0f172a',
-            lineHeight: 32,
-            fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-          },
-          lbl: {
-            fontSize: 12,
-            fontWeight: 500,
-            color: isDark ? '#94a3b8' : '#64748b',
-            lineHeight: 18,
-          },
-        },
-      },
-    },
     tooltip: {
       trigger: 'item',
       backgroundColor: isDark ? '#1e293b' : '#ffffff',
@@ -215,55 +187,17 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
       },
       formatter: '{b}: <b>{c}</b> đề tài ({d}%)',
     },
-    legend: {
-      orient: 'vertical',
-      right: '4%',
-      top: 'middle',
-      itemGap: 14,
-      itemWidth: 10,
-      itemHeight: 10,
-      icon: 'circle',
-      textStyle: {
-        color: textColor,
-        fontSize: 13,
-        rich: {
-          name: {
-            width: 100,
-            fontSize: 13,
-            color: isDark ? '#cbd5e1' : '#334155',
-          },
-          val: {
-            width: 38,
-            align: 'right',
-            fontSize: 13,
-            fontWeight: 700,
-            color: isDark ? '#f8fafc' : '#0f172a',
-          },
-          pct: {
-            width: 48,
-            align: 'right',
-            fontSize: 12,
-            color: isDark ? '#94a3b8' : '#64748b',
-          },
-        },
-      },
-      formatter: (name: string) => {
-        const item = statusCounts.find((s) => s.name === name);
-        const count = item ? item.value : 0;
-        const pct = totalAssigned > 0 ? ((count / totalAssigned) * 100).toFixed(1) : '0';
-        return `{name|${name}}{val|${count.toLocaleString('vi-VN')}}{pct|${pct}%}`;
-      },
-    },
     series: [
       {
-        name: 'Trạng thái',
+        name: 'Phân loại đề tài',
         type: 'pie',
         radius: ['52%', '72%'],
-        center: ['28%', '50%'],
+        center: ['50%', '50%'],
         avoidLabelOverlap: true,
-        padAngle: 1.5,
+        stillShowZeroSum: false,
+        padAngle: 0,
         itemStyle: {
-          borderRadius: 4,
+          borderRadius: 0,
           borderWidth: 0,
         },
         label: {
@@ -273,7 +207,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
           scale: true,
           scaleSize: 4,
         },
-        data: statusCounts,
+        data: levelCounts.map((group) => ({ ...group, itemStyle: { color: levelColors[group.level] } })),
       },
     ],
   };
@@ -419,36 +353,47 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
         />
       </div>
 
-      {/* Row 1 Charts: Trend & Status */}
+      <div className={isAdmin ? undefined : 'overview-user-charts'}>
+      {/* Row 1 Charts: Trend & Project Levels */}
       <div className="charts-grid-2">
-        <div className="chart-card glass-card">
+        {isAdmin && <div className="chart-card glass-card">
           <div className="chart-card-header">
             <div className="chart-title-box">
               <TrendingUp size={18} className="title-icon sky" />
-              <h3 className="chart-title">{isAdmin ? 'Số lượng Đề tài Giao, Nghiệm thu & Kinh phí qua các Năm' : 'Các đề tài đã giao từng đơn vị theo năm'}</h3>
+              <h3 className="chart-title">Số lượng Đề tài Giao, Nghiệm thu & Kinh phí qua các Năm</h3>
             </div>
           </div>
           <div className="chart-wrapper">
-            <ReactECharts option={isAdmin ? trendChartOption : unitYearChartOption} notMerge style={{ height: '340px', width: '100%' }} />
+            <ReactECharts option={trendChartOption} notMerge style={{ height: '340px', width: '100%' }} />
           </div>
-        </div>
+        </div>}
 
-        <div className="chart-card glass-card">
+        <div className="chart-card glass-card overview-level-chart">
           <div className="chart-card-header">
             <div className="chart-title-box">
               <PieChart size={18} className="title-icon emerald" />
-              <h3 className="chart-title">Cơ cấu Trạng thái Đề tài Thực hiện</h3>
+              <h3 className="chart-title">Phân loại đề tài theo cấp</h3>
             </div>
           </div>
-          <div className="chart-wrapper">
-            <ReactECharts option={statusDonutOption} style={{ height: '340px', width: '100%' }} />
+          <div className="chart-wrapper project-level-layout">
+            <div className="project-level-plot">
+              <ReactECharts option={levelDonutOption} notMerge style={{ height: '300px', width: '100%' }} />
+              <div className="project-level-total"><strong>{totalAssigned.toLocaleString('vi-VN')}</strong><span>Tổng đề tài</span></div>
+            </div>
+            <ul className="project-level-legend" aria-label="Số lượng và tỷ lệ đề tài theo cấp">
+              {levelCounts.map((group) => <li key={group.level}>
+                <span className="project-level-dot" style={{ backgroundColor: levelColors[group.level] }} aria-hidden="true" />
+                <span className="project-level-name">{group.name}</span>
+                <span className="project-level-value"><strong>{group.value.toLocaleString('vi-VN')}</strong><small>{(totalAssigned ? group.value / totalAssigned * 100 : 0).toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</small></span>
+              </li>)}
+            </ul>
           </div>
         </div>
       </div>
 
       {/* Row 2 Charts: Unit Treemap & Grade Bar */}
       <div className="charts-grid-2">
-        <div className="chart-card glass-card">
+        <div className="chart-card glass-card overview-unit-chart">
           <div className="chart-card-header">
             <div className="chart-title-box">
               <Building size={18} className="title-icon indigo" />
@@ -460,7 +405,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
           </div>
         </div>
 
-        <div className="chart-card glass-card">
+        {isAdmin && <div className="chart-card glass-card">
           <div className="chart-card-header">
             <div className="chart-title-box">
               <Award size={18} className="title-icon amber" />
@@ -470,6 +415,22 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
           <div className="chart-wrapper">
             <ReactECharts option={gradeBarOption} style={{ height: '320px', width: '100%' }} />
           </div>
+        </div>}
+      </div>
+      </div>
+
+      <div className="chart-card glass-card overview-year-chart">
+        <div className="chart-card-header">
+          <div className="chart-title-box">
+            <TrendingUp size={18} className="title-icon sky" />
+            <h3 className="chart-title">Các đề tài đã giao từng đơn vị theo năm</h3>
+          </div>
+        </div>
+        <div className="chart-wrapper">
+          <div className="overview-unit-year-scroll" tabIndex={0} role="region" aria-label="Biểu đồ 9 đơn vị theo năm giao, cuộn ngang để xem đủ cột">
+            <div className="overview-unit-year-canvas"><ReactECharts option={unitYearChartOption} notMerge style={{ height: '420px', width: '100%' }} /></div>
+          </div>
+          <p className="chart-note">9 đơn vị: {assignedByUnit.shownTotal.toLocaleString('vi-VN')} đề tài{assignedByUnit.otherUnits.map(({ unit, count }) => ` · ${unit}: ${count.toLocaleString('vi-VN')} đề tài`).join('')}</p>
         </div>
       </div>
 
