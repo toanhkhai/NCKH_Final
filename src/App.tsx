@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { AlertCircle, Menu, RefreshCw } from 'lucide-react';
+import { AlertCircle, Menu } from 'lucide-react';
 import { ErrorBoundary } from './nckh/components/ErrorBoundary.jsx';
 import { LoginModal } from './nckh/components/LoginModal.jsx';
 import { useAuth } from './nckh/context/AuthContext.jsx';
@@ -9,6 +9,7 @@ import { Sidebar, type PublicationView } from './components/common/Sidebar';
 import { Navbar } from './components/common/Navbar';
 import { FilterBar } from './components/common/FilterBar';
 import { ProjectDrawer } from './components/common/ProjectDrawer';
+import { PageLoader } from './components/common/PageLoader';
 import { OverviewView } from './components/views/OverviewView';
 import { UnitsView } from './components/views/UnitsView';
 import { ProgressView } from './components/views/ProgressView';
@@ -40,12 +41,7 @@ function ProjectsDashboard({ view, isAdmin, onNavigate, onLogin }: { view: Dashb
           <button type="button" className="btn-secondary" onClick={refreshData} disabled={isLoading}>Thử lại</button>
         </div>
       )}
-      {isLoading && !data && (
-        <div className="empty-state-box glass-card animate-fade-in" role="status">
-          <div className="empty-icon-wrapper"><RefreshCw size={36} className="spin-icon" /></div>
-          <h3 className="empty-title">Đang tải dữ liệu…</h3>
-        </div>
-      )}
+      {!data && !error && <PageLoader />}
       {data && (
         <>
           {view === 'overview' && <OverviewView isAdmin={isAdmin} />}
@@ -131,7 +127,7 @@ export default function App() {
         {visited.publications && (
           <div className="dashboard-pane" hidden={route.area !== 'publications'}>
             <ErrorBoundary>
-              <Suspense fallback={<div className="combined-loading">Đang mở dashboard công bố khoa học...</div>}>
+              <Suspense fallback={<PageLoader />}>
                 <PublicationsDashboard
                   mode={route.area === 'publications' ? route.view : 'all'}
                   onLogin={openLogin}
@@ -143,7 +139,7 @@ export default function App() {
         )}
         {visited.learners && (
           <div className="dashboard-pane projects-pane" hidden={route.area !== 'learners'}>
-            <ErrorBoundary><Suspense fallback={<div className="combined-loading">Đang mở dashboard người học…</div>}>
+            <ErrorBoundary><Suspense fallback={<PageLoader />}>
               <LearnerDashboard view={route.area === 'learners' ? route.view : 'overview'} isAdmin={projectRole === 'admin'} onLogin={openLogin} />
             </Suspense></ErrorBoundary>
           </div>

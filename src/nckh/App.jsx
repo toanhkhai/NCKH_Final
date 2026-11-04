@@ -10,6 +10,7 @@ import { GlobalFilterBar } from './components/GlobalFilterBar.jsx';
 import { PermissionManager } from './components/PermissionManager.jsx';
 import { User } from 'lucide-react';
 import { DEFAULT_SHEET1_URL, DEFAULT_SHEET2_URL } from './data/rawSheetData.js';
+import { PageLoader } from '../components/common/PageLoader';
 
 export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
   const { user, isGuest, isUser, isDelegated, isSuperAdmin, canViewFullData } = useAuth();
@@ -238,23 +239,7 @@ export default function App({ mode = 'all', onSourceTypeChange, onLogin }) {
         )}
 
         {/* Hiệu ứng đang tải dữ liệu khi khởi động trang (Level 2) */}
-        {currentLoading && activeRecords.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 sm:py-32 animate-in fade-in duration-300">
-            <div className="relative flex items-center justify-center w-20 h-20">
-              <div className="w-20 h-20 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin" />
-              <img
-                src="/logo/logo.png"
-                alt="Logo CTUMP"
-                className="w-10 h-10 object-contain absolute"
-              />
-            </div>
-            <div className="mt-5 text-center">
-              <p className="text-sm font-semibold text-slate-700 tracking-tight">
-                Đang tải dữ liệu...
-              </p>
-            </div>
-          </div>
-        )}
+        {currentLoading && activeRecords.length === 0 && <PageLoader />}
 
         {!currentLoading && !currentError && activeRecords.length === 0 && (
           <div className="text-center py-20 text-slate-500 text-xs">

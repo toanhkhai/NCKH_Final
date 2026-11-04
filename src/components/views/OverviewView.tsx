@@ -15,6 +15,7 @@ import {
 import { useDashboard } from '../../store/useDashboardStore';
 import { KpiCard } from '../common/KpiCard';
 import { EmptyState } from '../common/EmptyState';
+import { PageLoader } from '../common/PageLoader';
 import { GRADE_COLORS, LEVEL_LABELS, type ProjectLevel } from '../../types/project';
 import { yearSeries, budgetSummary, flagCount, isAcceptedProject, projectLevelCounts } from '../../services/projectAnalytics';
 import { UNIT_COLORS, STANDARD_UNITS } from '../../config/units';
@@ -28,7 +29,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
   const { data, filters, filteredProjects, theme, isLoading } = useDashboard({ allowFilters: isAdmin });
 
   if (isLoading) {
-    return <EmptyState title="Đang tải dữ liệu…" description="" />;
+    return <PageLoader />;
   }
 
   if (!data?.projects.length) {

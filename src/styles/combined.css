@@ -13,6 +13,23 @@
   font-size: 0.9rem;
 }
 
+.page-loader {
+  position: fixed;
+  inset: 0 0 0 260px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .page-loader { left: 0; }
+}
+
 .projects-pane .navbar-container {
   flex-wrap: wrap;
 }

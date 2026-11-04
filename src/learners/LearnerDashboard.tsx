@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import Papa from 'papaparse';
 import { Download, X } from 'lucide-react';
 import { Navbar } from '../components/common/Navbar';
+import { PageLoader } from '../components/common/PageLoader';
 import { getLearnerTotals, getLearnerSupervisors, getLearnerGroupSizes, loadLearnerData, searchText, countLearnerFlags, sumKnown, learnerChartGroups, type LearnerData, type LearnerProject, type LearnerView } from './data';
 import './learners.css';
 
@@ -97,7 +98,7 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
     <Navbar onLogin={onLogin} title="ĐỀ TÀI NGƯỜI HỌC" />
     <div className="learner-heading"><div><p>Đề tài KHCN / Đề tài người học</p><h2>{titles[view]}</h2></div></div>
     {(error || data?.errors.length) ? <div role="alert" className="data-load-alert"><span>{data ? 'Một phần dữ liệu chưa tải được.' : 'Không thể tải dữ liệu.'}</span><button type="button" className="btn-secondary" onClick={refresh} disabled={loading}>Thử lại</button></div> : null}
-    {loading && !data && <p className="learner-empty" role="status">Đang tải dữ liệu…</p>}
+    {!data && !error && <PageLoader />}
     {data && <>
       {view === 'overview' && totals && <>
         <div className="learner-metrics learner-totals" title="Thống kê theo năm giao">

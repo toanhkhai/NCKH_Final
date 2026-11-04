@@ -58,6 +58,7 @@ Lệnh này chạy kiểm thử bộ đọc dữ liệu Người học, dữ li�
 
 ## Dữ liệu và quyền truy cập
 
+- Ba phân hệ Cán bộ, Người học và Công bố khoa học dùng chung màn hình tải `PageLoader` (vòng xoay, logo CTUMP và thông báo “Đang tải dữ liệu...”) khi tải giao diện hoặc dữ liệu ban đầu.
 - Giao diện sử dụng chỉ hiển thị số liệu, bộ lọc và thao tác nghiệp vụ; không hiển thị trạng thái đọc Sheet, thông báo chẩn đoán hay liên kết mở bảng nguồn. Lỗi tải dữ liệu có thông báo ngắn và nút thử lại. Quy tắc tính và đối chiếu chi tiết được lưu trong `docs/`.
 - Phần đề tài đọc 6 tab Google Sheets qua `/api/sheet`; Vite dev server, Node server và Cloudflare Worker đều giữ proxy từ project gốc. Nếu proxy không khả dụng, client thử tải CSV trực tiếp từ Google.
 - Hai nhóm đề tài đọc dữ liệu khi mở lần đầu và khi tải lại trang. Chưa tự cập nhật liên tục khi trang đang mở. Năm mới được lấy từ dữ liệu; thêm tab/workbook cần cập nhật cấu hình và proxy.
