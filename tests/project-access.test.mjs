@@ -82,13 +82,14 @@ test('staff filter bar is absent on all view 1 pages and unchanged for authentic
     setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key),
   } });
   try {
-    for (const email of [null, 'user@example.com', whitelist.superAdmin]) {
+    for (const email of [null, 'user@example.com', whitelist.superAdmin, ...whitelist.delegatedEmails]) {
+      const isAdmin = email === whitelist.superAdmin || whitelist.delegatedEmails.includes(email);
       storage.clear();
       if (email) storage.set('ctump_auth_user', JSON.stringify({ email, name: 'Tài khoản kiểm tra', isGuest: false }));
       for (const view of ['overview', 'people', 'projects']) {
         Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { pathname: `/projects/staff/${view}`, hash: '', search: '' } } });
         const html = renderToStaticMarkup(createElement(AuthProvider, null, createElement(App)));
-        assert.equal(html.includes('staff-filter-bar'), email === whitelist.superAdmin, `${email ?? 'guest'} / ${view}`);
+        assert.equal(html.includes('staff-filter-bar'), isAdmin, `${email ?? 'guest'} / ${view}`);
       }
     }
   } finally {
