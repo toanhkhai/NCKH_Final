@@ -38,7 +38,7 @@ export const Header = ({
                 <button
                   type="button"
                   onClick={onLogin || (() => setShowLoginModal(true))}
-                  className="h-9 px-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs font-medium transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  className="header-login-btn h-9 px-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs font-medium transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
                   title="Đăng nhập hệ thống NCKH"
                 >
                   <LogIn className="w-3.5 h-3.5" />

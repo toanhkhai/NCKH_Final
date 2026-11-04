@@ -147,6 +147,9 @@
 .app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600) { color: #fff; background: #285a77; border: 1px solid #285a77; border-radius: 4px; box-shadow: inset 0 1px #ffffff0d; font-weight: 500; transition: background-color 120ms ease, border-color 120ms ease; }
 .app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600):hover { background: #1e4862; border-color: #1e4862; box-shadow: none; transform: none; }
 .app-layout :is(.btn-primary, .project-login-btn, button.bg-blue-600, a.bg-blue-600):active { background: #173c54; }
+.app-layout button.header-login-btn { background: #2563eb; border-color: #2563eb; }
+.app-layout button.header-login-btn:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.app-layout button.header-login-btn:active { background: #1e40af; border-color: #1e40af; }
 .app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export) { color: #4a606b; background: #fff; border: 1px solid #ced8d6; border-radius: 4px; box-shadow: 0 1px 1px #27343b04; font-weight: 500; font-size: 12px; }
 .app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export):hover { color: #274f65; background: #f1f5f3; border-color: #9eb5bc; }
 .app-layout :is(.btn-secondary, .reset-filter-btn, .catalog-export):active { background: #e8efec; }

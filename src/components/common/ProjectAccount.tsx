@@ -10,7 +10,7 @@ export function ProjectAccount({ onLogin }: { onLogin: () => void }) {
 
   if (isGuest) {
     return (
-      <button type="button" className="project-login-btn" onClick={onLogin}>
+      <button type="button" className="project-login-btn header-login-btn" onClick={onLogin}>
         <LogIn size={16} /> <span>Đăng nhập</span>
       </button>
     );
