@@ -48,6 +48,7 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
   const [error, setError] = useState('');
   const [adminFilters, setFilters] = useState(EMPTY_FILTERS);
   const filters = isAdmin ? adminFilters : EMPTY_FILTERS;
+  const hideCatalogFields = !isAdmin && view === 'projects';
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LearnerProject | null>(null);
   const inFlight = useRef(false);
@@ -87,11 +88,11 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
     link.href = url; link.download = `De_tai_nguoi_hoc_${new Date().toISOString().slice(0, 10)}.csv`; link.click(); URL.revokeObjectURL(url);
   };
   const renderTable = (projects: LearnerProject[]) => <div className="learner-table-wrap"><table className="learner-table"><thead><tr>
-    <th>Đề tài / Mã số</th><th>Chủ nhiệm</th><th>Lớp / Khóa</th><th>Đơn vị</th><th>Năm giao</th><th>Trạng thái</th><th>Kinh phí (tr.đ)</th>
+    <th>Đề tài / Mã số</th><th>Chủ nhiệm</th><th>Lớp / Khóa</th><th>Đơn vị</th><th>Năm giao</th>{!hideCatalogFields && <><th>Trạng thái</th><th>Kinh phí (tr.đ)</th></>}
   </tr></thead><tbody>{projects.map((p) => <tr key={p.id}>
     <td><button type="button" className="learner-title-link" onClick={() => setSelected(p)}>{p.title}</button><small>{p.code || 'Chưa có mã số'}</small></td>
     <td>{p.leader || 'Chưa cập nhật'}<small>{p.studentId || 'Chưa có MSSV/MSHV'}</small></td>
-    <td>{p.className || '—'} / {p.cohort || '—'}</td><td>{p.unit}</td><td>{p.year}</td><td>{p.status}</td><td>{fmt(p.budget)}</td>
+    <td>{p.className || '—'} / {p.cohort || '—'}</td><td>{p.unit}</td><td>{p.year}</td>{!hideCatalogFields && <><td>{p.status}</td><td>{fmt(p.budget)}</td></>}
   </tr>)}</tbody></table>{projects.length === 0 && <p className="learner-note">Không có hồ sơ phù hợp bộ lọc.</p>}</div>;
 
   return <main className="view-container learner-dashboard">
@@ -100,7 +101,7 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
     {(error || data?.errors.length) ? <div role="alert" className="data-load-alert"><span>{data ? 'Một phần dữ liệu chưa tải được.' : 'Không thể tải dữ liệu.'}</span><button type="button" className="btn-secondary" onClick={refresh} disabled={loading}>Thử lại</button></div> : null}
     {!data && !error && <PageLoader />}
     {data && <>
-      {view === 'overview' && totals && <>
+      {isAdmin && view === 'overview' && totals && <>
         <div className="learner-metrics learner-totals" title="Thống kê theo năm giao">
           <Metric label="Tổng số đề tài" value={fmt(totals.official)} note={totals.period || undefined} />
           <Metric label="Đã có hồ sơ chi tiết" value={fmt(totals.detailed)} />
@@ -115,12 +116,12 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
       </div>}
       {data.projects !== null && <>
         {view === 'overview' && <>
-          <div className="learner-metrics">
+          {isAdmin && <div className="learner-metrics">
             <Metric label={isAdmin ? 'Hồ sơ theo bộ lọc' : 'Hồ sơ chi tiết'} value={filtered.length} />
             <Metric label="Đã nghiệm thu" value={fmt(accepted)} />
             <Metric label="Kinh phí (triệu đồng)" value={fmt(sumKnown(filtered.map((p) => p.budget)))} />
             <Metric label="Bài báo" value={fmt(sumKnown(filtered.map((p) => p.publications)))} />
-          </div>
+          </div>}
           <div className="learner-grid"><Bars title="Đề tài theo đơn vị quản lý" values={group(filtered.map((p) => p.unit))} /><Bars title="Đề tài theo năm giao" showAll values={group(filtered.map((p) => p.year)).sort((a, b) => a[0].localeCompare(b[0]))} /></div>
         </>}
         {view === 'projects' && <section className="glass-card learner-card">
@@ -152,7 +153,7 @@ export default function LearnerDashboard({ view, isAdmin = false, onLogin }: { v
           <section className="glass-card learner-card"><h3>Hồ sơ cần hoàn thiện</h3><div className="learner-table-wrap"><table className="learner-table"><thead><tr><th>Đề tài</th><th>Cảnh báo</th></tr></thead><tbody>{filtered.filter((p) => p.issues.length).slice(0, 50).map((p) => <tr key={p.id}><td><button type="button" className="learner-title-link" onClick={() => setSelected(p)}>{p.code || p.title}</button></td><td>{p.issues.join('; ')}</td></tr>)}</tbody></table></div><p className="learner-note">Hiển thị tối đa 50 hồ sơ; dùng bộ lọc để thu hẹp.</p></section>
         </>}
       </>}
-      {(view === 'overview' || view === 'quality' || data.projects === null) && <section className="glass-card learner-card">
+      {(isAdmin || view !== 'overview') && (view === 'overview' || view === 'quality' || data.projects === null) && <section className="glass-card learner-card">
         <h3 title="Thống kê theo năm giao">Tổng hợp theo kỳ</h3>
         {data.summary ? <div className="learner-table-wrap"><table className="learner-table"><thead><tr><th>Kỳ</th><th>Tổng chính thức</th><th>Đã có chi tiết</th><th>Chưa có chi tiết</th><th>NT theo năm giao</th><th>NT theo năm thống kê</th><th>Gia hạn</th><th>Kinh phí (tr.đ)</th><th>Thanh lý</th></tr></thead><tbody>{data.summary.filter((s) => !filters.year || s.period === filters.year).map((s) => {
           const coverage = getLearnerTotals(data, s.period);

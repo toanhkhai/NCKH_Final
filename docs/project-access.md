@@ -7,6 +7,7 @@ Phần Đề tài KHCN ánh xạ phiên đăng nhập hiện có thành hai vai 
 | Menu Đề tài cán bộ | Tổng quan, Nhân sự nghiên cứu, Danh mục đề tài | Đủ bảy mục hiện có |
 | Menu Đề tài người học | Tổng quan, Danh mục đề tài, Người học & hướng dẫn | Đủ sáu mục hiện có |
 | Thanh bộ lọc ở cả hai nhóm đề tài | Ẩn thanh bộ lọc; số liệu dùng toàn bộ dữ liệu, bỏ qua bộ lọc admin còn lưu trong phiên | Giữ nguyên bộ lọc và trạng thái lựa chọn hiện có |
+| Năm ô thống kê và bảng Thống kê theo kỳ ở Tổng quan cán bộ | Ẩn toàn bộ năm ô thống kê và bảng Thống kê theo kỳ | Giữ nguyên năm ô thống kê và bảng Thống kê theo kỳ |
 | Biểu đồ đề tài theo năm ở Tổng quan cán bộ | Trục ngang có 9 đơn vị, mỗi đơn vị một cột chồng theo các năm giao; nhóm ngoài danh mục được ghi số lượng riêng | Cùng biểu đồ 9 đơn vị như user; có thêm biểu đồ giao, nghiệm thu và kinh phí hiện có |
 | Bố cục biểu đồ Tổng quan cán bộ | Ẩn xếp loại nghiệm thu; hàng trên gồm phân bố đơn vị và phân loại theo cấp; biểu đồ đơn vị/năm ở hàng dưới, rộng toàn hàng | Giữ bốn biểu đồ hiện có, thêm biểu đồ đơn vị/năm rộng toàn hàng ở bên dưới |
 | Danh mục cán bộ | Ẩn kinh phí, trạng thái, xếp loại ở bảng, chi tiết mở từ danh mục và CSV | Giữ đầy đủ cột, chi tiết và CSV |

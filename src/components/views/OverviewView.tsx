@@ -304,7 +304,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
   return (
     <div className="overview-view-container animate-fade-in">
       {/* KPI Cards Grid */}
-      <div className="kpi-grid">
+      {isAdmin && <div className="kpi-grid">
         <KpiCard
           title="Tổng số đề tài"
           value={totalAssigned.toLocaleString('vi-VN')}
@@ -352,7 +352,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
           trendText={flagCount(projects, 'stopped') === null ? 'Chưa cập nhật' : `${stoppedCount} đã ghi nhận`}
           progressPercent={flagCount(projects, 'stopped') === null ? undefined : totalAssigned ? stoppedCount / totalAssigned * 100 : 0}
         />
-      </div>
+      </div>}
 
       <div className={isAdmin ? undefined : 'overview-user-charts'}>
       {/* Row 1 Charts: Trend & Project Levels */}
@@ -436,7 +436,7 @@ export const OverviewView: React.FC<{ isAdmin?: boolean }> = ({ isAdmin = false 
       </div>
 
       {/* Summary by reporting period */}
-      {data.summaryTable.length > 0 && (
+      {isAdmin && data.summaryTable.length > 0 && (
         <div className="summary-matrix-card glass-card">
           <div className="chart-card-header">
             <div className="chart-title-box">

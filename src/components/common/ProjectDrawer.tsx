@@ -87,11 +87,11 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, 
                   Tháng {project.endMonth?.toString().padStart(2, '0') || '—'}/{project.endYear || '—'}
                 </span>
               </div>
-              <div className="drawer-field">
+              {!hideCatalogFields && <div className="drawer-field">
                 <span className="field-label">Thời lượng dự kiến:</span>
                 <span className="field-value">{project.durationMonths === undefined ? 'Chưa đủ ngày bắt đầu/kết thúc' : `${project.durationMonths} tháng`}</span>
-              </div>
-              <div className="drawer-field">
+              </div>}
+              {!hideCatalogFields && <div className="drawer-field">
                 <span className="field-label">Tình trạng gia hạn:</span>
                 <span className="field-value">
                   {projectFlag(project, 'extended') === null ? 'Chưa cập nhật' : project.isExtended ? (
@@ -102,7 +102,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, 
                     'Không gia hạn'
                   )}
                 </span>
-              </div>
+              </div>}
             </div>
           </section>
 
@@ -172,7 +172,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, 
           </section>
 
           {/* 4. Financials & Collaborations */}
-          <section className="drawer-section">
+          {!hideCatalogFields && <section className="drawer-section">
             <h3 className="drawer-section-title">
               <Coins size={16} />
               <span>{hideCatalogFields ? 'Hợp tác' : 'Kinh phí & Hợp tác'}</span>
@@ -208,10 +208,10 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, 
                 </span>
               </div>
             </div>
-          </section>
+          </section>}
 
           {/* 5. Acceptance & Evaluation */}
-          <section className="drawer-section">
+          {!hideCatalogFields && <section className="drawer-section">
             <h3 className="drawer-section-title">
               <Award size={16} />
               <span>Kết quả Nghiệm thu</span>
@@ -267,7 +267,7 @@ export const ProjectDrawer: React.FC<ProjectDrawerProps> = ({ project, onClose, 
                 </div>
               )}
             </div>
-          </section>
+          </section>}
 
           {/* 6. Cancelled Status (if applicable) */}
           {project.isStopped && (
