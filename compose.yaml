@@ -1,0 +1,11 @@
+services:
+  dashboard:
+    image: nckh-dashboard:1.0.0
+    build:
+      context: .
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    init: true
+    restart: unless-stopped

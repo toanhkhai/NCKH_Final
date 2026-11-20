@@ -38,6 +38,43 @@ npm start
 
 Mở [http://localhost:3000](http://localhost:3000). `npm start` phục vụ bản đã build trong `dist` và proxy Google Sheets. Khi sửa mã nguồn, chạy lại `npm run build` trước khi xem bản đóng gói. Nếu thiếu `dist`, server sẽ báo lệnh cần chạy.
 
+### Chạy bằng Docker
+
+Yêu cầu Docker Engine hoặc Docker Desktop đang chạy ở chế độ Linux containers. Image dùng Node.js 24, tự chạy kiểm thử và build giao diện; bản chạy chỉ chứa giao diện đã build, Node server và cấu hình proxy Sheets, chạy bằng tài khoản `node`.
+
+Build và chạy bằng Docker Compose từ thư mục project:
+
+```powershell
+docker compose up -d --build
+```
+
+Mở [http://localhost:3000](http://localhost:3000). Kiểm tra trạng thái bằng `docker compose ps`, xem log bằng `docker compose logs -f dashboard`, dừng bằng `docker compose down`. Health check gọi `/api/health` mỗi 30 giây. Muốn đổi cổng ngoài, đặt `$env:APP_PORT = '3001'` trước khi chạy Compose; cổng bên trong container vẫn là 3000.
+
+Hoặc build và chạy trực tiếp:
+
+```powershell
+docker build -t nckh-dashboard:1.0.0 -t nckh-dashboard:latest .
+docker run -d --name nckh-dashboard --init --restart unless-stopped -p 3000:3000 nckh-dashboard:1.0.0
+```
+
+Nếu cần dùng Google OAuth Client ID khác cấu hình mặc định, đặt `$env:VITE_GOOGLE_CLIENT_ID = 'your-client-id.apps.googleusercontent.com'` trước khi chạy `docker compose up -d --build`. Với `docker build`, truyền `--build-arg VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com`. Đây là cấu hình **lúc build**; đổi biến môi trường khi chạy container không thay đổi giao diện đã build. Thêm origin thực tế vào **Authorized JavaScript origins** của OAuth Client ID. Các file `.env*` và `*.local` không được chép vào image.
+
+Để chuyển image Linux AMD64 sang máy khác mà không cần registry:
+
+```powershell
+New-Item -ItemType Directory -Force artifacts | Out-Null
+docker save -o artifacts/nckh-dashboard-1.0.0-linux-amd64.tar nckh-dashboard:1.0.0 nckh-dashboard:latest
+```
+
+Trên máy đích có Docker, chép file `.tar`, rồi chạy:
+
+```powershell
+docker load -i nckh-dashboard-1.0.0-linux-amd64.tar
+docker run -d --name nckh-dashboard --init --restart unless-stopped -p 3000:3000 nckh-dashboard:1.0.0
+```
+
+Tên file trên áp dụng cho image build trên máy Linux AMD64 (Docker Desktop hiện tại). Nếu máy đích dùng ARM64, build riêng bằng `docker buildx build --platform linux/arm64 --load -t nckh-dashboard:1.0.0 .` rồi xuất với tên file tương ứng. Container và trình duyệt cần Internet để đọc Google Sheets và đăng nhập Google. Dữ liệu Sheets vẫn được đọc từ nguồn trực tuyến; quy tắc lưu phân quyền ở bản production giống mục “Dữ liệu và quyền truy cập” bên dưới.
+
 ### Kiểm tra trước khi sử dụng
 
 ```powershell

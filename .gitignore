@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Exported Docker images
+/artifacts/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
